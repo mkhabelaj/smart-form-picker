@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Smart Form Picker",
+  "version": "1.0",
+  "description": "A Chrome extension that assists users in manually selecting and populating form fields via a modal interface.",
+  "permissions": ["activeTab"],
+  "action": {
+    "default_title": "Smart Form Picker"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-script.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["data/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
