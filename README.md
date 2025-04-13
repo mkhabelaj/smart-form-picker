@@ -12,6 +12,7 @@ The modal interface is implemented using the Shadow DOM to encapsulate its UI an
   - [For Arc Browser](#for-arc-browser)
 - [Usage](#usage)
 - [File Structure](#file-structure)
+  - [Create File Structure](#create-data-directory) **_!Important_**
 
 ## Features
 
@@ -32,7 +33,7 @@ The modal interface is implemented using the Shadow DOM to encapsulate its UI an
 
 1. **Clone or Download the Repository:**
    ```bash
-   git clone https://github.com/mkhabelaj/smart-form-picker.git
+   git clone git@github.com:mkhabelaj/smart-form-picker.git
    ```
 1. **Open Chrome and Navigate to the Extensions Page:**
    - Type chrome://extensions/ in your address bar.
@@ -42,13 +43,13 @@ The modal interface is implemented using the Shadow DOM to encapsulate its UI an
    - Click on Load unpacked and select the smart-form-picker folder.
 1. The extension icon should now appear in your Chrome toolbar.
 
-For Arc Browser
+### For Arc Browser
 
 Arc Browser supports Chrome extensions natively. Follow these steps:
 
 1. **Clone or Download the Repository:**
    ```bash
-   git clone https://github.com/mkhabelaj/smart-form-picker.git
+   git clone git@github.com:mkhabelaj/smart-form-picker.git
    ```
 1. **Open Arc Browser:**
    - Arc supports chrome://extensions/. Navigate to this URL.
@@ -74,18 +75,9 @@ Arc Browser supports Chrome extensions natively. Follow these steps:
 
 ## File Structure
 
-smart-form-picker/
-├── data/ # Directory for JSON files ensure that you create this directory
-│ ├── mapping.json # Maps keys to JSON file names
-│ ├── userdata.json # Example key/value data for user information
-│ └── experience.json # Example profile data for work experience
-├── content-script.js # Main content script with modal & UI logic using Shadow DOM
-├── manifest.json # Manifest file for Chrome Extension (Manifest V3)
-└── README.md # Project documentation and instructions
-
 ### Create data directory
 
-The data directory currently supports types of files _mapping.json_, _keyvalue_, _profile_.
+The data directory currently supports three types of files _mapping.json_, _keyvalue_, _profile_.
 
 #### mapping.json
 
