@@ -1,4 +1,5 @@
 import SimpleModal from "../modals/simple-modal/modal/SimpleModal.js";
+import GenericElement from "../elements/GenericElement.js";
 import { fetchData } from "../api.js";
 /**
  * Class FillHelper
@@ -51,25 +52,33 @@ export default class FormPickerController {
    * @returns {HTMLElement} An unordered list element.
    */
   #keyPairToUl(dataObj) {
-    const list = document.createElement("ul");
-    list.style.listStyle = "none";
-    list.style.padding = "0";
+    const list = new GenericElement("ul", {
+      styles: { listStyle: "none", padding: "0" },
+    });
+
     for (const key in dataObj) {
-      const listItem = document.createElement("li");
-      listItem.style.padding = "8px";
-      listItem.style.borderBottom = "1px solid #ddd";
-      listItem.style.cursor = "pointer";
       const value = dataObj[key];
       let limited = value.slice(0, 70);
-      listItem.textContent = `${key}: ${limited}`;
       const self = this;
-      listItem.addEventListener("click", () => {
-        self.target.value = dataObj[key];
-        self.modal.close();
+
+      const listItem = new GenericElement("li", {
+        styles: {
+          padding: "8px",
+          borderBottom: "1px solid #ddd",
+          cursor: "pointer",
+        },
+        content: `${key}: ${limited}`,
+        events: {
+          click: () => {
+            self.target.value = dataObj[key];
+            self.modal.close();
+          },
+        },
       });
+
       list.appendChild(listItem);
     }
-    return list;
+    return list.get();
   }
 
   /**
@@ -77,17 +86,24 @@ export default class FormPickerController {
    * Displays a default informational message.
    */
   #loadInitialContent() {
-    const info = document.createElement("p");
-    info.textContent = "Select the tabs above for the desired fill content";
-    this.modal.renderContent(info);
+    const info = new GenericElement("p", {
+      content: "Select the tabs above for the desired fill content",
+      styles: {
+        textAlign: "center",
+      },
+    });
+    this.modal.renderContent(info.get());
   }
 
   #createHeaderSection() {
-    const section = document.createElement("section");
-    section.style.display = "flex";
-    section.style.justifyContent = "center";
-    section.style.gap = "1px";
-    return section;
+    const section = new GenericElement("section", {
+      styles: {
+        display: "flex",
+        justifyContent: "center",
+        gap: "1px",
+      },
+    });
+    return section.get();
   }
 
   /**

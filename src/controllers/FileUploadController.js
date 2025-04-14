@@ -1,5 +1,6 @@
 import SimpleModal from "../modals/simple-modal/modal/SimpleModal.js";
 import { fetchData, fetchBlob } from "../api.js";
+import GenericElement from "../elements/GenericElement.js";
 
 export default class FileUploadController {
   constructor() {
@@ -54,11 +55,14 @@ export default class FileUploadController {
 
   // Creates and returns a new form element.
   #createForm() {
-    const form = document.createElement("form");
-    form.style.display = "flex";
-    form.style.flexDirection = "column";
-    form.style.padding = "10px";
-    return form;
+    const form = new GenericElement("form", {
+      styles: {
+        display: "flex",
+        flexDirection: "column",
+        padding: "10px",
+      },
+    });
+    return form.get();
   }
 
   // Attaches a submit handler to the form. The handler retrieves the selected target using targetMap.
@@ -90,12 +94,15 @@ export default class FileUploadController {
   }
 
   #createContainer() {
-    const container = document.createElement("div");
-    container.style.display = "flex";
-    container.style.justifyContent = "space-around";
-    container.style.marginBottom = "15px";
-    container.style.gap = "2px";
-    return container;
+    const container = new GenericElement("div", {
+      styles: {
+        display: "flex",
+        justifyContent: "space-between",
+        marginBottom: "15px",
+        gap: "2px",
+      },
+    });
+    return container.get();
   }
 
   // Creates two sub-containers: one for the target selector and one for the file selector.
