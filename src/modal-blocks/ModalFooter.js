@@ -13,7 +13,7 @@ export default class ModalFooter {
    * @returns {HTMLElement} The footer div element.
    */
   create() {
-    const footer = document.createElement("div");
+    const footer = document.createElement("footer");
     footer.style.display = "flex";
     footer.style.justifyContent = "space-around";
     footer.style.marginBottom = "15px";

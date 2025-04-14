@@ -3,15 +3,8 @@ import { fetchData, fetchBlob } from "../api.js";
 
 export default class FileUploadController {
   constructor() {
-    this.modal = new SimpleModal();
-    this.#updateHeader();
+    this.modal = new SimpleModal("Smart File Upload");
     this.#loadContent();
-    this.#andCloseButton();
-  }
-  #updateHeader() {
-    const h3 = document.createElement("h3");
-    h3.textContent = "Smart Form Uploadler";
-    this.modal.header.append(h3);
   }
 
   async #loadContent() {
@@ -49,13 +42,12 @@ export default class FileUploadController {
     form.appendChild(submitButton);
 
     // Append the completed form to your modal content area
-    this.modal.content.append(form);
+    this.modal.renderContent(form);
   }
 
   // Creates and returns a new form element.
   #createForm() {
     const form = document.createElement("form");
-    form.style.border = "1px solid #000";
     form.style.display = "flex";
     form.style.flexDirection = "column";
     form.style.padding = "10px";
@@ -180,18 +172,5 @@ export default class FileUploadController {
       targetSelect.appendChild(option);
     }
     return targetSelect;
-  }
-
-  #andCloseButton() {
-    const closeButton = document.createElement("button");
-    closeButton.textContent = "Close";
-    closeButton.style.marginTop = "15px";
-    this.modal.footer.append(closeButton);
-    const self = this;
-    //TODO remove listeners
-    closeButton.addEventListener("click", function handler() {
-      self.modal.overlay.remove();
-      document.removeEventListener("click", handler);
-    });
   }
 }

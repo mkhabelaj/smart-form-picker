@@ -13,7 +13,10 @@ export default class ModalContent {
    * @returns {HTMLElement} The content div element.
    */
   #create() {
-    const content = document.createElement("div");
+    const content = document.createElement("main");
+    content.style.border = "1px solid #000000";
+    content.style.padding = "3px";
+    content.style.marginBottom = "3px";
     content.id = "modal-content";
     return content;
   }

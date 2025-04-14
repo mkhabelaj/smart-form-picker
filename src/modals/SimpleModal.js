@@ -8,34 +8,62 @@ import ModalFooter from "../modal-blocks/ModalFooter.js";
  * to create a complete modal dialog encapsulated within a Shadow DOM.
  */
 export default class SimpleModal {
-  constructor() {
+  #overlay;
+  #header;
+  #content;
+  #footer;
+  #modal;
+  constructor(title = "Modal") {
     // Create overlay and modal sections.
-    this.overlay = new Overlay();
-    this.header = new ModalHeader();
-    this.content = new ModalContent();
-    this.footer = new ModalFooter();
+    this.#overlay = new Overlay();
+    this.#header = new ModalHeader();
+    this.#content = new ModalContent();
+    this.#footer = new ModalFooter();
     // Create the modal host element with Shadow DOM.
-    this.modal = this.create();
+    this.#modal = this.#create();
 
     // Get the modal container inside the Shadow DOM.
-    const shadow = this.modal.shadowRoot;
+    const shadow = this.#modal.shadowRoot;
     const modalContainer = shadow.getElementById("data-modal");
 
     // Append header, content, and footer to the modal container.
-    modalContainer.appendChild(this.header.get());
-    modalContainer.appendChild(this.content.get());
-    modalContainer.appendChild(this.footer.get());
+    modalContainer.appendChild(this.#header.get());
+    modalContainer.appendChild(this.#content.get());
+    modalContainer.appendChild(this.#footer.get());
+
+    this.#andCloseButton();
+    this.title(title);
 
     // Append the complete modal host to the overlay.
-    this.overlay.append(this.modal);
+    this.#overlay.append(this.#modal);
   }
 
+  title(title) {
+    const h2 = document.createElement("h2");
+    h2.textContent = title;
+    this.#header.append(h2);
+  }
+  close() {
+    this.#overlay.remove();
+  }
+  appendHeader(item) {
+    this.#header.append(item);
+  }
+  appendContent(item) {
+    this.#content.append(item);
+  }
+  renderContent(item) {
+    this.#content.render(item);
+  }
+  appendFooter(item) {
+    this.#footer.append(item);
+  }
   /**
    * Creates the modal host element, attaches a Shadow DOM, injects styling,
    * and returns the host element.
    * @returns {HTMLElement} The modal host element with an attached shadow root.
    */
-  create() {
+  #create() {
     const modalHost = document.createElement("div");
     modalHost.id = "data-modal-host";
 
@@ -66,12 +94,25 @@ export default class SimpleModal {
     return modalHost;
   }
 
+  #andCloseButton() {
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "Close";
+    closeButton.style.marginTop = "15px";
+    this.#footer.append(closeButton);
+    const self = this;
+    //TODO remove listeners
+    closeButton.addEventListener("click", function handler() {
+      self.close();
+      document.removeEventListener("click", handler);
+    });
+  }
+
   /**
    * Returns the overlay element that contains the modal.
    * @returns {HTMLElement} The overlay element.
    */
   getOverlay() {
-    return this.overlay.get();
+    return this.#overlay.get();
   }
 
   /**
@@ -79,7 +120,7 @@ export default class SimpleModal {
    * @returns {HTMLElement} The modal container element.
    */
   getModal() {
-    return this.modal.shadowRoot.getElementById("data-modal");
+    return this.#modal.shadowRoot.getElementById("data-modal");
   }
 
   /**

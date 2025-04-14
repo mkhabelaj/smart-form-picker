@@ -12,26 +12,9 @@ export default class FormPickerController {
    */
   constructor(target) {
     this.target = target;
-    this.modal = new SimpleModal();
+    this.modal = new SimpleModal("Smart Form Picker");
     this.#loaderHeaderTabs();
     this.#loadInitialContent();
-    this.#addCancelButton();
-  }
-
-  /**
-   * Adds a cancel button to the modal footer.
-   * Clicking the cancel button removes the overlay.
-   * TODO: Remove event listeners when no longer needed.
-   */
-  #addCancelButton() {
-    const cancelButton = document.createElement("button");
-    cancelButton.textContent = "Cancel";
-    cancelButton.style.marginTop = "15px";
-    this.modal.footer.append(cancelButton);
-    const self = this;
-    cancelButton.addEventListener("click", function () {
-      self.modal.overlay.remove();
-    });
   }
 
   /**
@@ -40,7 +23,7 @@ export default class FormPickerController {
    */
   #keyValueRender(dataObj) {
     const list = this.#keyPairToUl(dataObj);
-    this.modal.content.render(list);
+    this.modal.renderContent(list);
   }
 
   /**
@@ -58,7 +41,7 @@ export default class FormPickerController {
       details.append(this.#keyPairToUl(dataObj[key]));
       section.append(details);
     }
-    this.modal.content.render(section);
+    this.modal.renderContent(section);
   }
 
   /**
@@ -82,7 +65,7 @@ export default class FormPickerController {
       const self = this;
       listItem.addEventListener("click", () => {
         self.target.value = dataObj[key];
-        self.modal.overlay.remove();
+        self.modal.close();
       });
       list.appendChild(listItem);
     }
@@ -96,7 +79,14 @@ export default class FormPickerController {
   #loadInitialContent() {
     const info = document.createElement("p");
     info.textContent = "Select the tabs above for the desired fill content";
-    this.modal.content.render(info);
+    this.modal.renderContent(info);
+  }
+
+  #createHeaderSection() {
+    const section = document.createElement("section");
+    section.style.display = "flex";
+    section.style.justifyContent = "space-between";
+    return section;
   }
 
   /**
@@ -105,11 +95,13 @@ export default class FormPickerController {
    */
   async #loaderHeaderTabs() {
     const resourceMap = await fetchData("mapping.json");
+    const headerSection = this.#createHeaderSection();
+    this.modal.appendHeader(headerSection);
     for (const fileName of resourceMap["tabs"]) {
       const data = await fetchData(fileName);
       const tab = document.createElement("button");
       tab.textContent = data["name"];
-      this.modal.header.append(tab);
+      headerSection.append(tab);
       const self = this;
       if (!("type" in data)) {
         throw Error(`${key} does not contain "type" key`);

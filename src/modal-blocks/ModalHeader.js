@@ -13,10 +13,12 @@ export default class ModalHeader {
    * @returns {HTMLElement} The header div element.
    */
   create() {
-    const header = document.createElement("div");
+    const header = document.createElement("header");
     header.style.display = "flex";
-    header.style.justifyContent = "space-around";
-    header.style.marginBottom = "15px";
+    header.style.gap = "2px";
+    header.style.flexDirection = "column";
+    header.style.marginBottom = "5px";
+    header.style.padding = "1px";
     return header;
   }
 
