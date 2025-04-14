@@ -16,7 +16,7 @@ export default class SimpleModal {
   #modal;
   constructor(title = "Modal") {
     // Create overlay and modal sections.
-    this.elementBuilder = new SimpleModalElementBuilder();
+    this.elementBuilder = SimpleModalElementBuilder;
     this.#overlay = new Overlay();
     this.#header = new ModalHeader();
     this.#content = new ModalContent();

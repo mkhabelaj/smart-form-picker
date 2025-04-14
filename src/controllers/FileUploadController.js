@@ -38,8 +38,15 @@ export default class FileUploadController {
     targetContainer.appendChild(targetSelect);
 
     // Create and append the submit button to the form
-    const submitButton = this.#createSubmitButton();
-    form.appendChild(submitButton);
+    const submitButton =
+      this.modal.elementBuilder.buttons.build.buildPrimaryButton(
+        "Upload",
+        () => {
+          form.requestSubmit();
+        },
+      );
+
+    this.modal.appendFooter(submitButton);
 
     // Append the completed form to your modal content area
     this.modal.renderContent(form);
@@ -82,24 +89,12 @@ export default class FileUploadController {
     }
   }
 
-  // Creates a submit button element and sets up its properties.
-  #createSubmitButton() {
-    const container = document.createElement("div");
-    container.style.display = "flex";
-    container.style.justifyContent = "center";
-    const button = document.createElement("button");
-    button.type = "submit";
-    button.textContent = "Upload";
-    container.appendChild(button);
-    return container;
-  }
-
-  // Creates a container element to hold the form sections.
   #createContainer() {
     const container = document.createElement("div");
     container.style.display = "flex";
     container.style.justifyContent = "space-around";
     container.style.marginBottom = "15px";
+    container.style.gap = "2px";
     return container;
   }
 
@@ -115,23 +110,12 @@ export default class FileUploadController {
   // Builds and returns a <select> element for choosing files,
   // populating it with options based on the provided resourceMap.
   #createFileSelect(resourceMap) {
-    const select = document.createElement("select");
-    select.name = "file-list";
-    select.style.width = "100%";
-    select.style.marginBottom = "15px";
-
-    const defaultOption = document.createElement("option");
-    defaultOption.value = "";
-    defaultOption.textContent = "Select a file";
-
-    select.appendChild(defaultOption);
+    const select = this.modal.elementBuilder.select.build("Select a file");
+    select.setName("file-list");
     for (const name in resourceMap["files"]) {
-      const option = document.createElement("option");
-      option.value = name;
-      option.textContent = name;
-      select.appendChild(option);
+      select.addOption(name, name);
     }
-    return select;
+    return select.get();
   }
 
   // Searches the document for file inputs, builds a Map keyed by a unique identifier, and returns it.
@@ -155,22 +139,15 @@ export default class FileUploadController {
 
   // Creates and returns a <select> element for target file inputs, populated with options from targetMap.
   #createTargetSelect(targetMap) {
-    const targetSelect = document.createElement("select");
-    targetSelect.name = "target-list";
-
-    // Add a default option.
-    const defaultOption = document.createElement("option");
-    defaultOption.value = "none";
-    defaultOption.textContent = "Select a target";
-    targetSelect.appendChild(defaultOption);
+    const targetSelect =
+      this.modal.elementBuilder.select.build("Select a target");
+    targetSelect.setName("target-list");
 
     // Create options from the targetMap identifiers.
     for (const [id] of targetMap.entries()) {
-      const option = document.createElement("option");
-      option.value = id;
-      option.textContent = id;
-      targetSelect.appendChild(option);
+      targetSelect.addOption(id, id);
     }
-    return targetSelect;
+
+    return targetSelect.get();
   }
 }
