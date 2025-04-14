@@ -6,83 +6,133 @@ const buttonSize = {
 Object.freeze(buttonSize);
 class Button {
   #button;
+  #styles = {};
 
-  constructor(
-    text = "Button",
-    size = "small",
-    textColor = "black",
-    backgroundColor = "#E0E0E0",
-    onClick = null,
-  ) {
+  /**
+   * Creates a new Button element.
+   *
+   * @param {string} text - The text to display on the button.
+   * @param {Function|null} onClick - Optional click event handler.
+   * @param {object} styles - Optional object containing initial inline CSS styles.
+   * @param {string|null} value - Optional value for the button element.
+   */
+  constructor(text = "Button", onClick = null, styles = {}, value = null) {
     this.#button = document.createElement("button");
-    this.#button.textContent = text;
-    this.setBorderRadius("5px");
-    this.setButtonSize(size);
-    this.setTextColor(textColor);
-    this.setBackgroundColor(backgroundColor);
-    this.setBorderColor(backgroundColor);
-    this.setBorderStyle("solid");
-    this.setBorderWidth("1px");
-    this.#button.style.cursor = "pointer";
-    if (onClick) this.#button.addEventListener("click", onClick);
+
+    // Set the button content. If a value is provided, assign it as the button's value.
+    this.setContent(text, value);
+
+    // Apply initial styles if provided.
+    this.setStyles(styles);
+
+    // Attach a click event listener if the onClick handler is provided.
+    if (onClick) {
+      this.setOnClick(onClick);
+    }
   }
 
+  /**
+   * Sets multiple inline styles on the button.
+   *
+   * @param {object} styles - An object whose keys are CSS properties and values are the CSS values.
+   */
+  setStyles(styles) {
+    this.#styles = styles;
+    Object.keys(styles).forEach((key) => {
+      this.#button.style[key] = styles[key];
+    });
+  }
+
+  /**
+   * Merges additional inline styles onto the existing styles.
+   *
+   * @param {object} styles - An object whose keys are CSS properties and values are the CSS values.
+   */
+  mergeStyles(styles) {
+    this.#styles = { ...this.#styles, ...styles };
+    Object.keys(styles).forEach((key) => {
+      this.#button.style[key] = styles[key];
+    });
+  }
+
+  /**
+   * Sets an individual inline style on the button.
+   *
+   * @param {string} property - The CSS property name.
+   * @param {string} value - The CSS value to assign.
+   */
+  setStyle(property, value) {
+    this.#button.style[property] = value;
+  }
+
+  /**
+   * Sets the content of the button. When called with two parameters,
+   * the first parameter is used for the displayed text and the second is set as the button's value attribute.
+   *
+   * @param {string} text - The text content for the button.
+   * @param {string} [value] - Optional value attribute for the button.
+   */
+  setContent(text, value) {
+    this.#button.textContent = text;
+    if (value !== undefined && value !== null) {
+      this.#button.value = value;
+    }
+  }
+
+  /**
+   * Sets the border color of the button.
+   *
+   * @param {string} color - A valid CSS border color.
+   */
   setBorderColor(color) {
     this.#button.style.borderColor = color;
   }
 
-  setBorderStyle(style) {
-    this.#button.style.borderStyle = style;
-  }
-
-  setBorderRadius(radius) {
-    this.#button.style.borderRadius = radius;
-  }
-
-  setBorderWidth(width) {
-    this.#button.style.borderWidth = width;
-  }
-
-  setOnClick(onClick) {
-    this.#button.addEventListener("click", onClick);
-  }
-
-  setTextColor(color) {
-    this.#button.style.color = color;
-  }
-
-  setBackgroundColor(color) {
-    this.#button.style.backgroundColor = color;
-  }
-
-  setText(text) {
-    this.#button.textContent = text;
-  }
-
+  /**
+   * Adjusts the button size by applying appropriate padding and font-size.
+   * Valid options include: "small", "medium", and "large".
+   *
+   * @param {string} sizeOption - The button size option.
+   */
   setButtonSize(sizeOption) {
-    // Reset any previous inline styles for padding and font-size.
-    this.#button.style.padding = "";
-    this.#button.style.fontSize = "";
-
-    // Apply styles based on the selected size option.
     switch (sizeOption) {
-      case buttonSize.small:
-        this.#button.style.padding = "4px 8px";
-        this.#button.style.fontSize = "12px";
+      case "small":
+        this.mergeStyles({
+          padding: "4px 8px",
+          fontSize: "12px",
+        });
         break;
-      case buttonSize.medium:
-        this.#button.style.padding = "8px 16px";
-        this.#button.style.fontSize = "16px";
+      case "medium":
+        this.mergeStyles({
+          padding: "8px 16px",
+          fontSize: "16px",
+        });
         break;
-      case buttonSize.large:
-        this.#button.style.padding = "12px 24px";
-        this.#button.style.fontSize = "20px";
+      case "large":
+        this.mergeStyles({
+          padding: "12px 24px",
+          fontSize: "20px",
+        });
         break;
       default:
         console.warn("Invalid size option provided:", sizeOption);
     }
   }
 
+  /**
+   * Attaches a click event listener to the button.
+   *
+   * @param {Function} handler - The function to execute when the button is clicked.
+   */
+  setOnClick(handler) {
+    this.#button.addEventListener("click", handler);
+  }
+
+  /**
+   * Returns the underlying DOM button element.
+   *
+   * @returns {HTMLElement} The button element.
+   */
   get() {
     return this.#button;
   }
