@@ -1,0 +1,14 @@
+{
+  "name": "smart-form-picker",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "scripts": {
+    "build:content": "bun build src/main.js --outfile=dist/content.bundle.js",
+    "build:watch": "bun run build:content --watch"
+  }
+}
