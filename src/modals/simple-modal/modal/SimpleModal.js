@@ -1,7 +1,8 @@
-import Overlay from "../Overlay.js";
-import ModalHeader from "../modal-blocks/ModalHeader.js";
-import ModalContent from "../modal-blocks/ModalContent.js";
-import ModalFooter from "../modal-blocks/ModalFooter.js";
+import Overlay from "../../../Overlay.js";
+import ModalHeader from "../../../modal-blocks/ModalHeader.js";
+import ModalContent from "../../../modal-blocks/ModalContent.js";
+import ModalFooter from "../../../modal-blocks/ModalFooter.js";
+import SimpleModalElementBuilder from "../SimpleModalElementBuilder.js";
 /**
  * Class SimpleModel
  * A composite class that brings together Overlay, ModelHeader, ModelContent, and ModelFooter
@@ -15,6 +16,7 @@ export default class SimpleModal {
   #modal;
   constructor(title = "Modal") {
     // Create overlay and modal sections.
+    this.elementBuilder = new SimpleModalElementBuilder();
     this.#overlay = new Overlay();
     this.#header = new ModalHeader();
     this.#content = new ModalContent();
@@ -95,16 +97,15 @@ export default class SimpleModal {
   }
 
   #andCloseButton() {
-    const closeButton = document.createElement("button");
-    closeButton.textContent = "Close";
-    closeButton.style.marginTop = "15px";
-    this.#footer.append(closeButton);
     const self = this;
-    //TODO remove listeners
-    closeButton.addEventListener("click", function handler() {
-      self.close();
-      document.removeEventListener("click", handler);
-    });
+    const closeButton = this.elementBuilder.buttons.build.buildDangerButton(
+      "Close",
+      function handler() {
+        self.close();
+        document.removeEventListener("click", handler);
+      },
+    );
+    this.#footer.append(closeButton);
   }
 
   /**

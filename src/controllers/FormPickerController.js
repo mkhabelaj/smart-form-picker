@@ -1,4 +1,4 @@
-import SimpleModal from "../modals/SimpleModal.js";
+import SimpleModal from "../modals/simple-modal/modal/SimpleModal.js";
 import { fetchData } from "../api.js";
 /**
  * Class FillHelper
@@ -85,7 +85,8 @@ export default class FormPickerController {
   #createHeaderSection() {
     const section = document.createElement("section");
     section.style.display = "flex";
-    section.style.justifyContent = "space-between";
+    section.style.justifyContent = "center";
+    section.style.gap = "1px";
     return section;
   }
 
@@ -99,8 +100,11 @@ export default class FormPickerController {
     this.modal.appendHeader(headerSection);
     for (const fileName of resourceMap["tabs"]) {
       const data = await fetchData(fileName);
-      const tab = document.createElement("button");
-      tab.textContent = data["name"];
+      const tab = this.modal.elementBuilder.buttons.build.buildPrimaryButton(
+        data["name"],
+        null,
+        this.modal.elementBuilder.buttons.buttonSize.small,
+      );
       headerSection.append(tab);
       const self = this;
       if (!("type" in data)) {

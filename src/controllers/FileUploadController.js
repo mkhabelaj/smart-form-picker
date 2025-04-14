@@ -1,4 +1,4 @@
-import SimpleModal from "../modals/SimpleModal.js";
+import SimpleModal from "../modals/simple-modal/modal/SimpleModal.js";
 import { fetchData, fetchBlob } from "../api.js";
 
 export default class FileUploadController {
