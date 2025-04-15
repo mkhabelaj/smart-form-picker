@@ -23,6 +23,7 @@ export default class TemplateController {
     this.#createLoadFromButton();
     this.#createClearPopupButton();
     this.#createTemplateAreaClearButton();
+    this.#createCopyButton();
     this.modal.renderContent(this.#container);
   }
 
@@ -312,7 +313,30 @@ export default class TemplateController {
   }
 
   // Placeholder for future implementation
-  #copyButon() {}
+  #createCopyButton() {
+    const textArea = this.#textArea;
+
+    const copyButton = this.elementbuilder.buttons.build.buildPrimaryButton(
+      "Copy",
+      async () => {
+        try {
+          const template = textArea.value;
+          if (!template) {
+            throw new Error("No text available to copy!");
+          }
+          // Use the Clipboard API to write text to the clipboard.
+          await navigator.clipboard.writeText(template);
+          alert("Template copied to clipboard!");
+        } catch (error) {
+          alert("Error copying template: " + error);
+        }
+      },
+      this.elementbuilder.buttons.buttonSize.small,
+    );
+
+    // Append the Copy button to the modal's footer.
+    this.modal.appendFooter(copyButton);
+  }
   #createDownloadButton() {}
   #createDownloadAsButton() {}
 
