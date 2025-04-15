@@ -106,7 +106,7 @@ export default class SimplePopup {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        z-index: 9999;
+        z-index: 99999;
         background-color: #fff;
         border: 1px solid #ccc;
         border-radius: 5px;

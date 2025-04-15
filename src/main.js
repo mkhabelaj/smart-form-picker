@@ -1,12 +1,20 @@
 import FormPickerController from "./controllers/FormPickerController";
 import FileUploadController from "./controllers/FileUploadController";
-import SimplePopup from "./popups/simple-popup/SimplePopup";
+import TemplateController from "./controllers/TemplateController";
 
 document.addEventListener("keydown", (event) => {
   // Ctrl+U triggers upload open.
   if (event.ctrlKey && event.key === "u") {
     event.preventDefault();
     new FileUploadController();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  // Ctrl+T triggers template Controller
+  if (event.ctrlKey && event.key === "t") {
+    event.preventDefault();
+    new TemplateController();
   }
 });
 
