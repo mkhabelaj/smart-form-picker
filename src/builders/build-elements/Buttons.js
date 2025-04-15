@@ -1,4 +1,4 @@
-import { Button, buttonSize } from "../../../elements/Button.js";
+import { Button, buttonSize } from "../../elements/Button.js";
 class Buttons {
   /**
    * Builds a generic button

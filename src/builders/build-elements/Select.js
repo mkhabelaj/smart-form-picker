@@ -1,4 +1,4 @@
-import Select from "../../../elements/Select.js";
+import Select from "../../elements/Select.js";
 export const SelectBuilder = {
   /**
    * Creates a new Select element.

@@ -1,4 +1,4 @@
-import SimpleModal from "../modals/simple-modal/modal/SimpleModal.js";
+import SimpleModal from "../modals/modals/simple-modal/SimpleModal.js";
 import { fetchData, fetchBlob } from "../api.js";
 import GenericElement from "../elements/GenericElement.js";
 

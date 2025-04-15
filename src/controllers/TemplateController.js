@@ -6,14 +6,14 @@ import { fetchData } from "../api.js";
  * Orchestrates the modal population and event handling.
  * Loads read-only data (from JSON files) to provide manual auto-fill options.
  */
-export default class FormPickerController {
+export default class TemplateController {
   /**
    * Constructs a FillHelper with the target field and creates the modal.
    * @param {HTMLElement} target - The form field to be populated.
    */
   constructor(target) {
     this.target = target;
-    this.modal = new SimpleModal("Smart Form Picker");
+    this.modal = new SimpleModal("Template Picker");
     this.#loaderHeaderTabs();
     this.#loadInitialContent();
   }
