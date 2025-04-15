@@ -25,6 +25,7 @@ export default class TemplateController {
     this.#createClearPopupButton();
     this.#createTemplateAreaClearButton();
     this.#createDownloadButton();
+    this.#createUploadPdfButton();
     this.#createCopyButton();
     this.modal.renderContent(this.#container);
   }
@@ -444,7 +445,120 @@ export default class TemplateController {
 
     this.modal.appendFooter(downloadButton);
   }
+  #createUploadPdfButton() {
+    const textArea = this.#textArea;
 
+    const uploadPdfButton =
+      this.elementbuilder.buttons.build.buildPrimaryButton(
+        "Upload PDF",
+        async () => {
+          try {
+            // Get all file upload inputs on the page
+            const fileInputs = document.querySelectorAll('input[type="file"]');
+            if (fileInputs.length === 0) {
+              throw new Error("No file upload inputs found on this page.");
+            }
+
+            // Create a popup for selecting the file input and naming the PDF
+            const popup = new SimplePopup("Upload PDF");
+            const container = new GenericElement("div", {
+              styles: {
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+              },
+            });
+
+            // Create a dropdown (select) element to list each file input.
+            // We’ll label them by their name attribute (if available) or by index.
+            const inputSelect = this.elementbuilder.select.build(
+              "-- Select Upload Input --",
+            );
+            fileInputs.forEach((input, index) => {
+              const label = input.name
+                ? `${input.name} (${index + 1})`
+                : `File Input ${index + 1}`;
+              inputSelect.addOption(label, index.toString());
+            });
+            container.appendChild(inputSelect.get());
+
+            // Create an input field for the PDF filename (without extension)
+            const fileNameInput = new GenericElement("input", {
+              attributes: {
+                type: "text",
+                placeholder: "Enter PDF File Name",
+              },
+              styles: {
+                width: "100%",
+                borderRadius: "5px",
+                padding: "5px",
+              },
+            });
+            container.appendChild(fileNameInput);
+
+            // Create an "Upload" button inside the popup.
+            const uploadButton =
+              this.elementbuilder.buttons.build.buildPrimaryButton(
+                "Upload",
+                async () => {
+                  try {
+                    // Ensure a file input was selected
+                    const selectedIndex = inputSelect.get().value;
+                    if (selectedIndex === "") {
+                      throw new Error("No file input selected.");
+                    }
+                    const fileInput = fileInputs[parseInt(selectedIndex)];
+
+                    // Generate a PDF from the textarea content using jsPDF.
+                    if (typeof jsPDF === "undefined") {
+                      throw new Error("jsPDF library is not loaded.");
+                    }
+                    const doc = new jsPDF();
+                    // Set a smaller font size to fit more content
+                    doc.setFontSize(10);
+                    const text = textArea.value;
+                    const lines = doc.splitTextToSize(text, 180);
+                    doc.text(lines, 10, 10);
+
+                    // Generate the PDF as a Blob.
+                    const pdfBlob = doc.output("blob");
+
+                    // Create a File object for the PDF.
+                    const fileName =
+                      (fileNameInput.get().value.trim() || "template") + ".pdf";
+                    const pdfFile = new File([pdfBlob], fileName, {
+                      type: "application/pdf",
+                    });
+
+                    // Use the DataTransfer API to simulate a user file selection.
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(pdfFile);
+                    fileInput.files = dataTransfer.files;
+                    // Dispatch a change event in case the page listens for it.
+                    fileInput.dispatchEvent(
+                      new Event("change", { bubbles: true }),
+                    );
+
+                    popup.close();
+                  } catch (error) {
+                    alert("Error uploading PDF: " + error);
+                  }
+                },
+                this.elementbuilder.buttons.buttonSize.small,
+              );
+
+            popup.setBody(container.get());
+            popup.setFooter(uploadButton);
+          } catch (error) {
+            alert("Error initializing PDF upload: " + error);
+          }
+        },
+        this.elementbuilder.buttons.buttonSize.small,
+      );
+
+    // Append the Upload PDF button to the modal's footer.
+    this.modal.appendFooter(uploadPdfButton);
+  }
   // Creates the container element.
   #createContainer() {
     const container = new GenericElement("div", {
