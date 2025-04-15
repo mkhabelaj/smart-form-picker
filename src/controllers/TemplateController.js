@@ -9,22 +9,93 @@ export default class TemplateController {
   #container;
   #savedNamesListKey = "savedNamesList";
   #templateSelectLoader;
+
   constructor() {
     this.elementbuilder = SimpleElementBuilder;
     this.#container = this.#createContainer();
+    // Kick off the template select loader early so it’s added to the container.
     this.#createTemplateSelectLoader();
     this.#textArea = this.#createTexArea();
     this.#container.append(this.#textArea);
+
     this.modal = new SimpleModal("Template Picker");
     this.#createSaveAsButton();
     this.#createLoadFromButton();
     this.#createClearPopupButton();
+    this.#createTemplateAreaClearButton();
     this.modal.renderContent(this.#container);
   }
 
-  // Method to create the "Save As" button
+  #createTemplateAreaClearButton() {
+    const textArea = this.#textArea;
+    const clearTemplateButton =
+      this.elementbuilder.buttons.build.buildPrimaryButton(
+        "Clear Area",
+        async () => {
+          try {
+            // Create a popup with a confirmation message.
+            const popup = new SimplePopup("Clear Template Area");
+            const container = new GenericElement("div", {
+              styles: {
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+              },
+            });
+
+            // Create a confirmation message element.
+            const confirmationMessage = new GenericElement("p", {
+              content: "Are you sure you want to clear the template area?",
+            });
+
+            container.appendChild(confirmationMessage);
+
+            // Create the confirm button.
+            const confirmButton =
+              this.elementbuilder.buttons.build.buildPrimaryButton(
+                "Yes, Clear",
+                async () => {
+                  textArea.value = ""; // Clear the template area
+                  popup.close();
+                },
+                this.elementbuilder.buttons.buttonSize.small,
+              );
+
+            // Create the cancel button.
+            const cancelButton =
+              this.elementbuilder.buttons.build.buildPrimaryButton(
+                "Cancel",
+                async () => {
+                  popup.close();
+                },
+                this.elementbuilder.buttons.buttonSize.small,
+              );
+
+            // Build a container to hold the confirm and cancel buttons.
+            const buttonContainer = new GenericElement("div", {
+              styles: {
+                display: "flex",
+                justifyContent: "space-around",
+                gap: "10px",
+              },
+            });
+            buttonContainer.appendChild(confirmButton);
+            buttonContainer.appendChild(cancelButton);
+
+            // Set the popup body and footer.
+            popup.setBody(container.get());
+            popup.setFooter(buttonContainer.get());
+          } catch (error) {
+            alert("Error clearing template area: " + error);
+          }
+        },
+      );
+
+    // Append the clear button to the modal's footer.
+    this.modal.appendFooter(clearTemplateButton);
+  }
+  // Creates a "Save As" button that opens a popup to let the user save the current template.
   #createSaveAsButton() {
-    const self = this;
     const savedNamesListKey = this.#savedNamesListKey;
     const textArea = this.#textArea;
 
@@ -41,20 +112,13 @@ export default class TemplateController {
         });
 
         const saveAsInput = new GenericElement("input", {
-          attributes: {
-            type: "text",
-            placeholder: "Template Name",
-          },
-          styles: {
-            width: "100%",
-            borderRadius: "5px",
-            padding: "5px",
-          },
+          attributes: { type: "text", placeholder: "Template Name" },
+          styles: { width: "100%", borderRadius: "5px", padding: "5px" },
         });
         container.appendChild(saveAsInput);
 
         const savePopupButton =
-          self.elementbuilder.buttons.build.buildPrimaryButton(
+          this.elementbuilder.buttons.build.buildPrimaryButton(
             "Save",
             async () => {
               try {
@@ -63,16 +127,16 @@ export default class TemplateController {
                 if (templateName === "") {
                   throw new Error("Template name cannot be empty");
                 }
-                // Retrieve the stored list of names
+                // Retrieve the stored list of template names.
                 const result = await getStorage(savedNamesListKey);
                 let savedNames = result[savedNamesListKey] || [];
-                // Check if the template name already exists
+                // If the template name already exists, throw an error.
                 if (savedNames.includes(templateName)) {
                   throw new Error("Template name already exists");
                 }
-                // Add the new template name to the list
+                // Add the new template name to the list.
                 savedNames.push(templateName);
-                // Save both the template and the updated list to storage
+                // Save the template under its name and update the saved names list.
                 await setStorage({
                   [templateName]: template,
                   [savedNamesListKey]: savedNames,
@@ -89,12 +153,12 @@ export default class TemplateController {
         popup.setFooter(savePopupButton);
       },
     );
+
     this.modal.appendFooter(saveAsButton);
   }
 
-  // Method to create the "Load From" button with a dropdown
+  // Creates a "Load From" button that opens a popup with a dropdown list to select and load a template.
   #createLoadFromButton() {
-    const self = this;
     const savedNamesListKey = this.#savedNamesListKey;
     const textArea = this.#textArea;
 
@@ -110,26 +174,20 @@ export default class TemplateController {
               gap: "10px",
             },
           });
-          // Create a dropdown (select element) for choosing a template
+          // Build a dropdown (select element) with a default option.
           const loadSelect = this.elementbuilder.select.build(
             "-- Select Template --",
           );
 
-          // Retrieve the list of saved template names from storage
+          // Retrieve the stored template names from storage.
           const result = await getStorage(savedNamesListKey);
           const savedNames = result[savedNamesListKey] || [];
-          console.log(savedNames);
-
-          // Populate the dropdown with an option for each saved template name
-          savedNames.forEach((name) => {
-            loadSelect.addOption(name, name);
-          });
+          savedNames.forEach((name) => loadSelect.addOption(name, name));
 
           container.appendChild(loadSelect.get());
 
-          // Create the "Load" button within the popup
           const loadPopupButton =
-            self.elementbuilder.buttons.build.buildPrimaryButton(
+            this.elementbuilder.buttons.build.buildPrimaryButton(
               "Load",
               async () => {
                 try {
@@ -137,15 +195,15 @@ export default class TemplateController {
                   if (!selectedName) {
                     throw new Error("No template selected");
                   }
-                  // Retrieve the template content using the selected name as key
+                  // Retrieve the template content using the selected name as key.
                   const templateResult = await getStorage(selectedName);
                   const template = templateResult[selectedName];
                   if (template === undefined) {
                     throw new Error("Template not found in storage");
                   }
-                  // Set the textarea with the loaded template
+                  // Set the textarea with the loaded template.
                   textArea.value = template;
-                  //TODO:reset the template select loader
+                  // TODO: Optionally reset the template select loader if needed.
                   popup.close();
                 } catch (error) {
                   alert(error);
@@ -161,11 +219,12 @@ export default class TemplateController {
         }
       },
     );
+
     this.modal.appendFooter(loadFromButton);
   }
-  // Method to create the "Clear Template" popup button
+
+  // Creates a "Clear Template" button that opens a popup to select and remove a saved template.
   #createClearPopupButton() {
-    const self = this;
     const savedNamesListKey = this.#savedNamesListKey;
     const textArea = this.#textArea;
 
@@ -173,10 +232,7 @@ export default class TemplateController {
       "Clear Template",
       async () => {
         try {
-          // Create a new popup for clearing a template
           const popup = new SimplePopup("Clear Template");
-
-          // Create a container element for the popup body
           const container = new GenericElement("div", {
             styles: {
               display: "flex",
@@ -184,48 +240,42 @@ export default class TemplateController {
               gap: "10px",
             },
           });
-
-          // Create a dropdown (select) element to list saved template names
+          // Build a dropdown for selecting which template to clear.
           const clearSelect = this.elementbuilder.select.build(
             "-- Select Template to Clear --",
           );
 
-          // Retrieve the stored list of saved template names
+          // Retrieve the stored list of template names.
           const result = await getStorage(savedNamesListKey);
           const savedNames = result[savedNamesListKey] || [];
-
-          // Populate the dropdown with each saved template name
-          savedNames.forEach((name) => {
-            clearSelect.addOption(name, name);
-          });
+          savedNames.forEach((name) => clearSelect.addOption(name, name));
 
           container.appendChild(clearSelect.get());
 
-          // Create the "Clear" button inside the popup
           const clearPopupButton =
-            self.elementbuilder.buttons.build.buildPrimaryButton(
+            this.elementbuilder.buttons.build.buildPrimaryButton(
               "Clear",
               async () => {
                 try {
-                  // Get the selected template name from the dropdown
                   const selectedName = clearSelect.get().value;
                   if (!selectedName) {
                     throw new Error("No template selected for clearing");
                   }
 
-                  // Optionally, check if the current content in the textarea matches the template being cleared.
+                  // Optionally capture the current content in the textarea.
                   const currentContent = textArea.value;
 
-                  // Remove the template entry from chrome.storage
+                  // Remove the template entry from storage.
                   await new Promise((resolve, reject) => {
                     chrome.storage.local.remove(selectedName, () => {
-                      if (chrome.runtime.lastError)
+                      if (chrome.runtime.lastError) {
                         return reject(chrome.runtime.lastError);
+                      }
                       resolve();
                     });
                   });
 
-                  // Retrieve the current list and update it by filtering out the cleared template name
+                  // Update the saved names list by filtering out the cleared template.
                   const listResult = await getStorage(savedNamesListKey);
                   let updatedNames = listResult[savedNamesListKey] || [];
                   updatedNames = updatedNames.filter(
@@ -233,11 +283,11 @@ export default class TemplateController {
                   );
                   await setStorage({ [savedNamesListKey]: updatedNames });
 
-                  // If the textarea is currently showing the cleared template's content, clear it.
+                  // Clear the textarea if it was displaying the cleared template.
+                  const templateData = await getStorage(selectedName);
                   if (
-                    currentContent !== "" &&
-                    currentContent ===
-                      (await getStorage(selectedName))[selectedName]
+                    currentContent &&
+                    currentContent === templateData[selectedName]
                   ) {
                     textArea.value = "";
                   }
@@ -250,7 +300,6 @@ export default class TemplateController {
               this.elementbuilder.buttons.buttonSize.small,
             );
 
-          // Set the body and footer (button area) of the popup
           popup.setBody(container.get());
           popup.setFooter(clearPopupButton);
         } catch (error) {
@@ -259,13 +308,15 @@ export default class TemplateController {
       },
     );
 
-    // Append the Clear Template button to the modal's footer
     this.modal.appendFooter(clearButton);
   }
+
+  // Placeholder for future implementation
   #copyButon() {}
   #createDownloadButton() {}
   #createDownloadAsButton() {}
 
+  // Creates the container element.
   #createContainer() {
     const container = new GenericElement("div", {
       styles: {
@@ -276,6 +327,8 @@ export default class TemplateController {
     });
     return container.get();
   }
+
+  // Creates the textarea element.
   #createTexArea() {
     const textArea = new GenericElement("textarea", {
       attributes: {
@@ -290,20 +343,28 @@ export default class TemplateController {
     });
     return textArea.get();
   }
+
+  // Initializes the template select loader to load templates from mapping.json into a select element.
   async #createTemplateSelectLoader() {
-    const data = await fetchData("mapping.json");
-    const templateSelect = this.elementbuilder.select.build("Select Template");
+    try {
+      const data = await fetchData("mapping.json");
+      const templateSelect =
+        this.elementbuilder.select.build("Select Template");
 
-    templateSelect.setOnChange(async (e) => {
-      console.log(e.target.value);
-      const text = await fetchText(e.target.value);
-      this.#textArea.value = text;
-    });
+      templateSelect.setOnChange(async (e) => {
+        const selectedValue = e.target.value;
+        console.log(selectedValue);
+        const text = await fetchText(selectedValue);
+        this.#textArea.value = text;
+      });
 
-    for (const name of data["templates"]) {
-      templateSelect.addOption(name, name);
+      for (const name of data["templates"]) {
+        templateSelect.addOption(name, name);
+      }
+      this.#templateSelectLoader = templateSelect.get();
+      this.#container.append(this.#templateSelectLoader);
+    } catch (error) {
+      console.error("Error loading templates:", error);
     }
-    this.#templateSelectLoader = templateSelect.get();
-    this.#container.append(this.#templateSelectLoader);
   }
 }
