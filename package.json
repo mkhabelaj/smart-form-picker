@@ -10,5 +10,8 @@
   "scripts": {
     "build:content": "bun build src/main.js --outfile=dist/content.bundle.js",
     "build:watch": "bun run build:content --watch"
+  },
+  "dependencies": {
+    "jspdf": "^3.0.1"
   }
 }

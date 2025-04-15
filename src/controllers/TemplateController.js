@@ -3,6 +3,7 @@ import GenericElement from "../elements/GenericElement.js";
 import { fetchData, fetchText, setStorage, getStorage } from "../api.js";
 import SimpleElementBuilder from "../builders/SimpleElementBuilder.js";
 import SimplePopup from "../popups/simple-popup/SimplePopup.js";
+import { jsPDF } from "jspdf";
 
 export default class TemplateController {
   #textArea;
@@ -23,6 +24,7 @@ export default class TemplateController {
     this.#createLoadFromButton();
     this.#createClearPopupButton();
     this.#createTemplateAreaClearButton();
+    this.#createDownloadButton();
     this.#createCopyButton();
     this.modal.renderContent(this.#container);
   }
@@ -337,8 +339,111 @@ export default class TemplateController {
     // Append the Copy button to the modal's footer.
     this.modal.appendFooter(copyButton);
   }
-  #createDownloadButton() {}
-  #createDownloadAsButton() {}
+  #createDownloadButton() {
+    const textArea = this.#textArea;
+
+    const downloadButton = this.elementbuilder.buttons.build.buildPrimaryButton(
+      "Download",
+      async () => {
+        try {
+          // Create a popup for downloading the template.
+          const popup = new SimplePopup("Download Template");
+          const container = new GenericElement("div", {
+            styles: {
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+            },
+          });
+
+          // File name input field (without extension)
+          const fileNameInput = new GenericElement("input", {
+            attributes: {
+              type: "text",
+              placeholder: "File Name (without extension)",
+            },
+            styles: {
+              width: "100%",
+              borderRadius: "5px",
+              padding: "5px",
+            },
+          });
+          container.appendChild(fileNameInput);
+
+          // Create the "Download as TXT" button.
+          const downloadTxtButton =
+            this.elementbuilder.buttons.build.buildPrimaryButton(
+              "Download as TXT",
+              async () => {
+                try {
+                  const fileName =
+                    fileNameInput.get().value.trim() || "template";
+                  const template = textArea.value;
+                  // Create a Blob with plain text.
+                  const blob = new Blob([template], { type: "text/plain" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `${fileName}.txt`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                  popup.close();
+                } catch (error) {
+                  alert("Error downloading TXT: " + error);
+                }
+              },
+              this.elementbuilder.buttons.buttonSize.small,
+            );
+
+          // Create the "Download as PDF" button.
+          const downloadPdfButton =
+            this.elementbuilder.buttons.build.buildPrimaryButton(
+              "Download as PDF",
+              async () => {
+                try {
+                  const fileName =
+                    fileNameInput.get().value.trim() || "template";
+                  const template = textArea.value;
+                  // Ensure jsPDF is loaded; if not, the operation cannot proceed.
+                  if (typeof jsPDF === "undefined") {
+                    throw new Error("jsPDF library is not loaded.");
+                  }
+                  const doc = new jsPDF();
+                  doc.setFontSize(10);
+                  // Split long text into lines to fit the PDF width.
+                  const lines = doc.splitTextToSize(template, 180);
+                  doc.text(lines, 10, 10);
+                  doc.save(`${fileName}.pdf`);
+                  popup.close();
+                } catch (error) {
+                  alert("Error downloading PDF: " + error);
+                }
+              },
+              this.elementbuilder.buttons.buttonSize.small,
+            );
+
+          // Create a container to hold both download buttons.
+          const buttonsContainer = new GenericElement("div", {
+            styles: {
+              display: "flex",
+              justifyContent: "space-around",
+              gap: "10px",
+            },
+          });
+          buttonsContainer.appendChild(downloadTxtButton);
+          buttonsContainer.appendChild(downloadPdfButton);
+
+          // Set the popup's body (with file name input) and footer (buttons).
+          popup.setBody(container.get());
+          popup.setFooter(buttonsContainer.get());
+        } catch (error) {
+          alert("Error initializing download popup: " + error);
+        }
+      },
+    );
+
+    this.modal.appendFooter(downloadButton);
+  }
 
   // Creates the container element.
   #createContainer() {
