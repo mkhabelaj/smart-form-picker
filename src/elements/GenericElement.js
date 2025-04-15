@@ -10,10 +10,11 @@ export default class GenericElement {
    *   options.html: String for inner HTML (overrides plain text if provided).
    *   options.styles: An object of inline CSS styles.
    *   options.events: An object where keys are event names and values are event handlers.
+   *   options.attributes: An object where keys are attribute names and values are attribute values.
    */
   constructor(
     tagName = "div",
-    { content = "", html = "", styles = {}, events = {} } = {},
+    { content = "", html = "", styles = {}, events = {}, attributes = {} } = {},
   ) {
     this.#element = document.createElement(tagName);
 
@@ -31,6 +32,20 @@ export default class GenericElement {
     Object.entries(events).forEach(([event, handler]) => {
       this.addEventListener(event, handler);
     });
+
+    // Set attributes provided in the attributes object.
+    this.setAttributes(attributes);
+  }
+
+  /**
+   * html attributes to the element.
+   *
+   * @param {object} attributes - An object where keys are attribute names and values are attribute values.
+   */
+  setAttributes(attributes) {
+    for (const [key, value] of Object.entries(attributes)) {
+      this.#element.setAttribute(key, value);
+    }
   }
 
   /**
