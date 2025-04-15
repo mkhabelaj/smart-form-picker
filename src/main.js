@@ -1,5 +1,6 @@
 import FormPickerController from "./controllers/FormPickerController";
 import FileUploadController from "./controllers/FileUploadController";
+import SimplePopup from "./popups/simple-popup/SimplePopup";
 
 document.addEventListener("keydown", (event) => {
   // Ctrl+U triggers upload open.

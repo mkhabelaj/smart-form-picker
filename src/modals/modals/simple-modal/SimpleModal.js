@@ -2,7 +2,7 @@ import Overlay from "../../../Overlay.js";
 import ModalHeader from "../../modal-blocks/ModalHeader.js";
 import ModalContent from "../../modal-blocks/ModalContent.js";
 import ModalFooter from "../../modal-blocks/ModalFooter.js";
-import SimpleModalElementBuilder from "../../../builders/SimpleModalElementBuilder.js";
+import SimpleModalElementBuilder from "../../../builders/SimpleElementBuilder.js";
 /**
  * Class SimpleModel
  * A composite class that brings together Overlay, ModelHeader, ModelContent, and ModelFooter
