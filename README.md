@@ -1,8 +1,7 @@
 # Smart Form Picker
 
-!> [!WARNING]
-
-> These docs are outdated!! and will be updated soon
+> [!WARNING]
+> ### These docs are outdated!! and will be updated soon
 
 Smart Form Picker is a browser extension that helps users manually select and populate form fields on web pages via an interactive modal interface. Instead of automatic filling, it allows users to review and choose from pre-configured data sources (provided as JSON files) to populate form fields.
 
