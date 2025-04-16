@@ -3,8 +3,8 @@ import GenericElement from "../elements/GenericElement.js";
 import { fetchData, fetchText, setStorage, getStorage } from "../api.js";
 import SimpleElementBuilder from "../builders/SimpleElementBuilder.js";
 import SimplePopup from "../popups/simple-popup/SimplePopup.js";
-import { jsPDF } from "jspdf";
 import { Toast } from "../toasts/Toast.js";
+import { createPDF, getGeneratedJsPDF } from "../utils.js";
 
 export default class TemplateController {
   #textArea;
@@ -413,16 +413,7 @@ export default class TemplateController {
                       this.toast.error("No text available to download!");
                       throw new Error("No text available to download!");
                     }
-                    // Ensure jsPDF is loaded; if not, the operation cannot proceed.
-                    if (typeof jsPDF === "undefined") {
-                      throw new Error("jsPDF library is not loaded.");
-                    }
-                    const doc = new jsPDF();
-                    doc.setFontSize(10);
-                    // Split long text into lines to fit the PDF width.
-                    const lines = doc.splitTextToSize(template, 180);
-                    doc.text(lines, 10, 10);
-                    doc.save(`${fileName}.pdf`);
+                    createPDF(template, fileName);
                     popup.close();
                     this.toast.success(`PDF saved as ${fileName}.pdf`);
                   } catch (error) {
@@ -515,20 +506,12 @@ export default class TemplateController {
                     }
                     const fileInput = fileInputs[parseInt(selectedIndex)];
 
-                    // Generate a PDF from the textarea content using jsPDF.
-                    if (typeof jsPDF === "undefined") {
-                      throw new Error("jsPDF library is not loaded.");
-                    }
-                    const doc = new jsPDF();
-                    // Set a smaller font size to fit more content
-                    doc.setFontSize(10);
                     const text = textArea.value;
                     if (text === "") {
                       this.toast.error("No text available to upload!");
                       throw new Error("No text available to upload!");
                     }
-                    const lines = doc.splitTextToSize(text, 180);
-                    doc.text(lines, 10, 10);
+                    const doc = getGeneratedJsPDF(text);
 
                     // Generate the PDF as a Blob.
                     const pdfBlob = doc.output("blob");
