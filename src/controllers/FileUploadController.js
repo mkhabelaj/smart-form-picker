@@ -1,56 +1,63 @@
 import SimpleModal from "../modals/modals/simple-modal/SimpleModal.js";
 import { fetchData, fetchBlob } from "../api.js";
 import GenericElement from "../elements/GenericElement.js";
+import { Toast } from "../toasts/Toast.js";
 
 export default class FileUploadController {
   constructor() {
+    this.toast = new Toast();
     this.modal = new SimpleModal("Smart File Upload");
     this.#loadContent();
   }
 
   async #loadContent() {
-    // Load resource map data (e.g., a JSON mapping)
-    const resourceMap = await fetchData("mapping.json");
+    try {
+      // Load resource map data (e.g., a JSON mapping)
+      const resourceMap = await fetchData("mapping.json");
 
-    // Create the form
-    const form = this.#createForm();
+      // Create the form
+      const form = this.#createForm();
 
-    // Build the targetMap from available file inputs
-    const targetMap = this.#buildTargetMap();
+      // Build the targetMap from available file inputs
+      const targetMap = this.#buildTargetMap();
 
-    // Attach the form submit handler that uses the targetMap
-    this.#attachFormSubmitHandler(form, targetMap, resourceMap["files"]);
+      // Attach the form submit handler that uses the targetMap
+      this.#attachFormSubmitHandler(form, targetMap, resourceMap["files"]);
 
-    // Create the container for sub-sections and append it
-    const container = this.#createContainer();
-    form.appendChild(container);
+      // Create the container for sub-sections and append it
+      const container = this.#createContainer();
+      form.appendChild(container);
 
-    // Create inner containers for file and target selectors
-    const { targetContainer, fileContainer } = this.#createSubContainers();
-    container.appendChild(targetContainer);
-    container.appendChild(fileContainer);
+      // Create inner containers for file and target selectors
+      const { targetContainer, fileContainer } = this.#createSubContainers();
+      container.appendChild(targetContainer);
+      container.appendChild(fileContainer);
 
-    // Create a multiple file select dropdown (based on resourceMap)
-    const fileSelect = this.#createFileSelect(resourceMap);
-    fileContainer.appendChild(fileSelect);
+      // Create a multiple file select dropdown (based on resourceMap)
+      const fileSelect = this.#createFileSelect(resourceMap);
+      fileContainer.appendChild(fileSelect);
 
-    // Create a target dropdown using the targetMap
-    const targetSelect = this.#createTargetSelect(targetMap);
-    targetContainer.appendChild(targetSelect);
+      // Create a target dropdown using the targetMap
+      const targetSelect = this.#createTargetSelect(targetMap);
+      targetContainer.appendChild(targetSelect);
 
-    // Create and append the submit button to the form
-    const submitButton =
-      this.modal.elementBuilder.buttons.build.buildPrimaryButton(
-        "Upload",
-        () => {
-          form.requestSubmit();
-        },
-      );
+      // Create and append the submit button to the form
+      const submitButton =
+        this.modal.elementBuilder.buttons.build.buildPrimaryButton(
+          "Upload",
+          () => {
+            form.requestSubmit();
+          },
+        );
 
-    this.modal.appendFooter(submitButton);
+      this.modal.appendFooter(submitButton);
 
-    // Append the completed form to your modal content area
-    this.modal.renderContent(form);
+      // Append the completed form to your modal content area
+      this.modal.renderContent(form);
+    } catch (error) {
+      console.error("Error loading content:", error);
+      this.toast.error("Error loading content.");
+    }
   }
 
   // Creates and returns a new form element.
@@ -69,17 +76,20 @@ export default class FileUploadController {
   #attachFormSubmitHandler(form, targetMap, resourceMap) {
     form.onsubmit = async (e) => {
       e.preventDefault();
-      const formData = new FormData(e.target);
-      const selectedTargetId = formData.get("target-list");
-      const fileInput = formData.get("file-list");
-      const targetInput = targetMap.get(selectedTargetId);
-      const blob = await fetchBlob(resourceMap[fileInput]);
-      this.#injectBlob(blob, targetInput, resourceMap[fileInput]);
+      try {
+        const formData = new FormData(e.target);
+        const selectedTargetId = formData.get("target-list");
+        const fileInput = formData.get("file-list");
+        const targetInput = targetMap.get(selectedTargetId);
+        const blob = await fetchBlob(resourceMap[fileInput]);
+        this.#injectBlob(blob, targetInput, resourceMap[fileInput]);
+      } catch (error) {
+        this.toast.error("Error uploading file.");
+      }
     };
   }
 
   #injectBlob(blob, target, fileName) {
-    console.log("Injecting file:", fileName, blob, target);
     try {
       const file = new File([blob], fileName, {
         type: blob.type || "text/plain",
@@ -88,7 +98,10 @@ export default class FileUploadController {
       dataTransfer.items.add(file);
       target.files = dataTransfer.files;
       target.dispatchEvent(new Event("change", { bubbles: true }));
+      this.toast.success(`${fileName} successfully injected.`);
+      this.modal.close();
     } catch (error) {
+      this.toast.error("Error injecting file.");
       console.error("Error injecting file:", error);
     }
   }

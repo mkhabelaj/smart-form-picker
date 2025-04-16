@@ -4,6 +4,7 @@ import { fetchData, fetchText, setStorage, getStorage } from "../api.js";
 import SimpleElementBuilder from "../builders/SimpleElementBuilder.js";
 import SimplePopup from "../popups/simple-popup/SimplePopup.js";
 import { jsPDF } from "jspdf";
+import { Toast } from "../toasts/Toast.js";
 
 export default class TemplateController {
   #textArea;
@@ -12,6 +13,7 @@ export default class TemplateController {
   #templateSelectLoader;
 
   constructor() {
+    this.toast = new Toast();
     this.elementbuilder = SimpleElementBuilder;
     this.#container = this.#createContainer();
     // Kick off the template select loader early so it’s added to the container.
@@ -60,6 +62,7 @@ export default class TemplateController {
                 "Yes, Clear",
                 async () => {
                   textArea.value = ""; // Clear the template area
+                  this.toast.success("Template area cleared.");
                   popup.close();
                 },
                 this.elementbuilder.buttons.buttonSize.small,
@@ -79,7 +82,8 @@ export default class TemplateController {
             popup.setBody(container.get());
             popup.setFooter(buttonContainer.get());
           } catch (error) {
-            alert("Error clearing template area: " + error);
+            console.error(error);
+            this.toast.error("Error clearing template area.");
           }
         },
       );
@@ -134,9 +138,11 @@ export default class TemplateController {
                   [templateName]: template,
                   [savedNamesListKey]: savedNames,
                 });
+                this.toast.success(`Template saved as ${templateName}.`);
                 popup.close();
               } catch (error) {
-                alert(error);
+                console.error(error);
+                this.toast.error("Error saving template.");
               }
             },
             this.elementbuilder.buttons.buttonSize.small,
@@ -198,9 +204,11 @@ export default class TemplateController {
                     // Set the textarea with the loaded template.
                     textArea.value = template;
                     // TODO: Optionally reset the template select loader if needed.
+                    this.toast.success(`Template loaded from ${selectedName}.`);
                     popup.close();
                   } catch (error) {
-                    alert(error);
+                    console.error(error);
+                    this.toast.error("Error loading template.");
                   }
                 },
                 this.elementbuilder.buttons.buttonSize.small,
@@ -209,7 +217,8 @@ export default class TemplateController {
             popup.setBody(container.get());
             popup.setFooter(loadPopupButton);
           } catch (error) {
-            alert(error);
+            console.error(error);
+            this.toast.error("Error loading template.");
           }
         },
       );
@@ -253,6 +262,7 @@ export default class TemplateController {
                 try {
                   const selectedName = clearSelect.get().value;
                   if (!selectedName) {
+                    this.toast.error("No template selected for clearing");
                     throw new Error("No template selected for clearing");
                   }
 
@@ -286,9 +296,11 @@ export default class TemplateController {
                     textArea.value = "";
                   }
 
+                  this.toast.success(`Template cleared from ${selectedName}.`);
                   popup.close();
                 } catch (error) {
-                  alert(error);
+                  console.error(error);
+                  this.toast.error("Error clearing template.");
                 }
               },
               this.elementbuilder.buttons.buttonSize.small,
@@ -297,7 +309,8 @@ export default class TemplateController {
           popup.setBody(container.get());
           popup.setFooter(clearPopupButton);
         } catch (error) {
-          alert(error);
+          console.error(error);
+          this.toast.error("Error clearing template.");
         }
       },
     );
@@ -314,14 +327,16 @@ export default class TemplateController {
       async () => {
         try {
           const template = textArea.value;
-          if (!template) {
+          if (template === "") {
+            this.toast.error("No text available to copy!");
             throw new Error("No text available to copy!");
           }
           // Use the Clipboard API to write text to the clipboard.
           await navigator.clipboard.writeText(template);
-          alert("Template copied to clipboard!");
+          this.toast.success("Template copied to clipboard.");
         } catch (error) {
-          alert("Error copying template: " + error);
+          console.error(error);
+          this.toast.error("Error copying template.");
         }
       },
     );
@@ -363,6 +378,10 @@ export default class TemplateController {
                   try {
                     const fileName = fileNameInput.value.trim() || "template";
                     const template = textArea.value;
+                    if (template === "") {
+                      this.toast.error("No text available to download!");
+                      throw new Error("No text available to download!");
+                    }
                     // Create a Blob with plain text.
                     const blob = new Blob([template], { type: "text/plain" });
                     const url = URL.createObjectURL(blob);
@@ -372,8 +391,10 @@ export default class TemplateController {
                     a.click();
                     URL.revokeObjectURL(url);
                     popup.close();
+                    this.toast.success(`TXT saved as ${fileName}.txt`);
                   } catch (error) {
-                    alert("Error downloading TXT: " + error);
+                    console.error(error);
+                    this.toast.error("Error downloading TXT.");
                   }
                 },
                 this.elementbuilder.buttons.buttonSize.small,
@@ -387,6 +408,11 @@ export default class TemplateController {
                   try {
                     const fileName = fileNameInput.value.trim() || "template";
                     const template = textArea.value;
+
+                    if (template === "") {
+                      this.toast.error("No text available to download!");
+                      throw new Error("No text available to download!");
+                    }
                     // Ensure jsPDF is loaded; if not, the operation cannot proceed.
                     if (typeof jsPDF === "undefined") {
                       throw new Error("jsPDF library is not loaded.");
@@ -398,8 +424,10 @@ export default class TemplateController {
                     doc.text(lines, 10, 10);
                     doc.save(`${fileName}.pdf`);
                     popup.close();
+                    this.toast.success(`PDF saved as ${fileName}.pdf`);
                   } catch (error) {
-                    alert("Error downloading PDF: " + error);
+                    console.error(error);
+                    this.toast.error("Error downloading PDF.");
                   }
                 },
                 this.elementbuilder.buttons.buttonSize.small,
@@ -420,7 +448,8 @@ export default class TemplateController {
             popup.setBody(container.get());
             popup.setFooter(buttonsContainer.get());
           } catch (error) {
-            alert("Error initializing download popup: " + error);
+            console.error(error);
+            this.toast.error("Error initializing download popup.");
           }
         },
       );
@@ -481,6 +510,7 @@ export default class TemplateController {
                     // Ensure a file input was selected
                     const selectedIndex = inputSelect.get().value;
                     if (selectedIndex === "") {
+                      this.toast.error("No file input selected.");
                       throw new Error("No file input selected.");
                     }
                     const fileInput = fileInputs[parseInt(selectedIndex)];
@@ -493,6 +523,10 @@ export default class TemplateController {
                     // Set a smaller font size to fit more content
                     doc.setFontSize(10);
                     const text = textArea.value;
+                    if (text === "") {
+                      this.toast.error("No text available to upload!");
+                      throw new Error("No text available to upload!");
+                    }
                     const lines = doc.splitTextToSize(text, 180);
                     doc.text(lines, 10, 10);
 
@@ -516,8 +550,10 @@ export default class TemplateController {
                     );
 
                     popup.close();
+                    this.toast.success(`PDF uploaded as ${fileName}`);
                   } catch (error) {
-                    alert("Error uploading PDF: " + error);
+                    console.error(error);
+                    this.toast.error("Error uploading PDF.");
                   }
                 },
                 this.elementbuilder.buttons.buttonSize.small,
@@ -526,7 +562,8 @@ export default class TemplateController {
             popup.setBody(container.get());
             popup.setFooter(uploadButton);
           } catch (error) {
-            alert("Error initializing PDF upload: " + error);
+            console.error(error);
+            this.toast.error("Error initializing PDF upload.");
           }
         },
       );
@@ -582,6 +619,7 @@ export default class TemplateController {
       this.#container.append(this.#templateSelectLoader);
     } catch (error) {
       console.error("Error loading templates:", error);
+      this.toast.error("Error loading templates.");
     }
   }
 }

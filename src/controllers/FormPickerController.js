@@ -1,6 +1,7 @@
 import SimpleModal from "../modals/modals/simple-modal/SimpleModal.js";
 import GenericElement from "../elements/GenericElement.js";
 import { fetchData } from "../api.js";
+import { Toast } from "../toasts/Toast.js";
 /**
  * Class FillHelper
  * Orchestrates the modal population and event handling.
@@ -12,6 +13,7 @@ export default class FormPickerController {
    * @param {HTMLElement} target - The form field to be populated.
    */
   constructor(target) {
+    this.toast = new Toast();
     this.target = target;
     this.modal = new SimpleModal("Smart Form Picker");
     this.#loaderHeaderTabs();
@@ -56,27 +58,33 @@ export default class FormPickerController {
       styles: { listStyle: "none", padding: "0" },
     });
 
-    for (const key in dataObj) {
-      const value = dataObj[key];
-      let limited = value.slice(0, 70);
-      const self = this;
+    try {
+      for (const key in dataObj) {
+        const value = dataObj[key];
+        let limited = value.slice(0, 70);
+        const self = this;
 
-      const listItem = new GenericElement("li", {
-        styles: {
-          padding: "8px",
-          borderBottom: "1px solid #ddd",
-          cursor: "pointer",
-        },
-        content: `${key}: ${limited}`,
-        events: {
-          click: () => {
-            self.target.value = dataObj[key];
-            self.modal.close();
+        const listItem = new GenericElement("li", {
+          styles: {
+            padding: "8px",
+            borderBottom: "1px solid #ddd",
+            cursor: "pointer",
           },
-        },
-      });
+          content: `${key}: ${limited}`,
+          events: {
+            click: () => {
+              self.target.value = dataObj[key];
+              self.modal.close();
+              self.toast.success(`${key} successfully populated.`);
+            },
+          },
+        });
 
-      list.appendChild(listItem);
+        list.appendChild(listItem);
+      }
+    } catch (error) {
+      console.error(error);
+      this.toast.error("Error rendering key/value list.");
     }
     return list.get();
   }
@@ -111,37 +119,42 @@ export default class FormPickerController {
    * Registers an event handler based on the type (keyValue or profile).
    */
   async #loaderHeaderTabs() {
-    const resourceMap = await fetchData("mapping.json");
-    const headerSection = this.#createHeaderSection();
-    this.modal.appendHeader(headerSection);
-    for (const fileName of resourceMap["tabs"]) {
-      const data = await fetchData(fileName);
-      const tab = this.modal.elementBuilder.buttons.build.buildPrimaryButton(
-        data["name"],
-        null,
-        this.modal.elementBuilder.buttons.buttonSize.small,
-      );
-      headerSection.append(tab);
-      const self = this;
-      if (!("type" in data)) {
-        throw Error(`${key} does not contain "type" key`);
+    try {
+      const resourceMap = await fetchData("mapping.json");
+      const headerSection = this.#createHeaderSection();
+      this.modal.appendHeader(headerSection);
+      for (const fileName of resourceMap["tabs"]) {
+        const data = await fetchData(fileName);
+        const tab = this.modal.elementBuilder.buttons.build.buildPrimaryButton(
+          data["name"],
+          null,
+          this.modal.elementBuilder.buttons.buttonSize.small,
+        );
+        headerSection.append(tab);
+        const self = this;
+        if (!("type" in data)) {
+          throw Error(`${key} does not contain "type" key`);
+        }
+        switch (data["type"]) {
+          case "keyValue":
+            tab.addEventListener("click", function () {
+              self.#keyValueRender(data["data"]);
+            });
+            break;
+          case "profile":
+            tab.addEventListener("click", function () {
+              self.#profileRender(data["data"]);
+            });
+            break;
+          default:
+            throw Error(
+              "Unrecognized resource type. Valid types are keyValue, profile",
+            );
+        }
       }
-      switch (data["type"]) {
-        case "keyValue":
-          tab.addEventListener("click", function () {
-            self.#keyValueRender(data["data"]);
-          });
-          break;
-        case "profile":
-          tab.addEventListener("click", function () {
-            self.#profileRender(data["data"]);
-          });
-          break;
-        default:
-          throw Error(
-            "Unrecognized resource type. Valid types are keyValue, profile",
-          );
-      }
+    } catch (error) {
+      console.error(error);
+      this.toast.error("Error loading header tabs.");
     }
   }
 }
