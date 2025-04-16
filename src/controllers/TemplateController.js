@@ -117,7 +117,7 @@ export default class TemplateController {
 
         const saveAsInput = new GenericElement("input", {
           attributes: { type: "text", placeholder: "Template Name" },
-          styles: { width: "100%", borderRadius: "5px", padding: "5px" },
+          styles: { borderRadius: "5px", padding: "5px" },
         });
         container.appendChild(saveAsInput);
 
@@ -364,7 +364,6 @@ export default class TemplateController {
               placeholder: "File Name (without extension)",
             },
             styles: {
-              width: "100%",
               borderRadius: "5px",
               padding: "5px",
             },
@@ -489,7 +488,6 @@ export default class TemplateController {
                 placeholder: "Enter PDF File Name",
               },
               styles: {
-                width: "100%",
                 borderRadius: "5px",
                 padding: "5px",
               },
@@ -580,7 +578,6 @@ export default class TemplateController {
         cols: 50,
       },
       styles: {
-        width: "100%",
         borderRadius: "5px",
       },
     });

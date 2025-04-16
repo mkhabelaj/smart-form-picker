@@ -11,10 +11,18 @@ export default class SimplePopup {
   #header;
   #body;
   #footer;
+  #styles = {};
 
-  constructor(title = "Popup") {
+  constructor(title = "Popup", { styles = {} } = {}) {
     this.elementBuilder = SimpleElementBuilder;
     this.#popup = this.#createPopup();
+
+    if (Object.keys(styles).length > 0) {
+      this.setStyles(styles);
+    } else {
+      this.#setDefaultStyles();
+    }
+
     this.#header = this.#createHeader();
     this.#body = this.#createBody();
     this.#footer = this.#createFooter();
@@ -27,6 +35,42 @@ export default class SimplePopup {
     this.#addCloseButton();
   }
 
+  /**
+   * Sets the styles for the modal.
+   * @param {Object} styles - An object containing css properties and values.
+   */
+  setStyles(styles) {
+    this.#styles = styles;
+    for (const [key, value] of Object.entries(styles)) {
+      this.#popup.style.setProperty(key, value);
+    }
+  }
+
+  /**
+   * Merges styles into the existing styles of the modal.
+   * @param {Object} styles - An object containing css properties and values.
+   */
+  mergeStyles(styles) {
+    const mergedStyles = { ...this.#styles, ...styles };
+    this.setStyles(mergedStyles);
+  }
+
+  #setDefaultStyles() {
+    this.#styles = {
+      position: "fixed",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      "z-index": 99999,
+      background: "#fff",
+      border: "1px solid #ccc",
+      "border-radius": "5px",
+      boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
+      minWidth: "200px",
+      padding: "10px",
+    };
+    this.setStyles(this.#styles);
+  }
   /**
    * Adds a close button to the popup
    * @returns {void}
@@ -97,25 +141,7 @@ export default class SimplePopup {
     const host = document.createElement("div");
     host.id = "popup-host";
     const shadowRoot = host.attachShadow({ mode: "open" });
-    const style = document.createElement("style");
     const shadowContent = document.createElement("div");
-    shadowContent.appendChild(style);
-    style.textContent = `
-      .pop-up {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 99999;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        min-width: 200px;
-        padding: 10px;
-      }
-
-    `;
     shadowContent.id = "shadow-content";
     shadowContent.classList.add("pop-up");
     shadowRoot.appendChild(shadowContent);

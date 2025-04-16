@@ -14,7 +14,9 @@ export default class SimpleModal {
   #content;
   #footer;
   #modal;
-  constructor(title = "Modal") {
+  #styles;
+  #modalContainer;
+  constructor(title = "Modal", { styles = {} } = {}) {
     // Create overlay and modal sections.
     this.elementBuilder = SimpleModalElementBuilder;
     this.#overlay = new Overlay();
@@ -26,12 +28,19 @@ export default class SimpleModal {
 
     // Get the modal container inside the Shadow DOM.
     const shadow = this.#modal.shadowRoot;
-    const modalContainer = shadow.getElementById("data-modal");
+    this.#modalContainer = shadow.getElementById("data-modal");
+
+    // if styles are provided, set them.
+    if (Object.keys(styles).length > 0) {
+      this.setStyles(styles);
+    } else {
+      this.#setDefaultStyles();
+    }
 
     // Append header, content, and footer to the modal container.
-    modalContainer.appendChild(this.#header.get());
-    modalContainer.appendChild(this.#content.get());
-    modalContainer.appendChild(this.#footer.get());
+    this.#modalContainer.appendChild(this.#header.get());
+    this.#modalContainer.appendChild(this.#content.get());
+    this.#modalContainer.appendChild(this.#footer.get());
 
     this.#andCloseButton();
     this.title(title);
@@ -40,26 +49,84 @@ export default class SimpleModal {
     this.#overlay.append(this.#modal);
   }
 
+  /**
+   * Sets the styles for the modal.
+   * @param {Object} styles - An object containing css properties and values.
+   */
+  setStyles(styles) {
+    this.#styles = styles;
+    for (const [key, value] of Object.entries(styles)) {
+      this.#modalContainer.style.setProperty(key, value);
+    }
+  }
+
+  /**
+   * Merges styles into the existing styles of the modal.
+   * @param {Object} styles - An object containing css properties and values.
+   */
+  mergeStyles(styles) {
+    const mergedStyles = { ...this.#styles, ...styles };
+    this.setStyles(mergedStyles);
+  }
+
+  /**
+   * Sets the title of the modal.
+   * @param {string} title - The title to set.
+   */
   title(title) {
     const h2 = document.createElement("h2");
     h2.textContent = title;
     this.#header.append(h2);
   }
+  /**
+   * Closes the modal by removing the overlay from the DOM.
+   * @returns {void}
+   */
   close() {
     this.#overlay.remove();
   }
+  /**
+   * Appends a header item to the modal.
+   * @param {HTMLElement} item - The element to append.
+   */
   appendHeader(item) {
     this.#header.append(item);
   }
+  /**
+   * Appends a content item to the modal.
+   * @param {HTMLElement} item - The element to append.
+   */
   appendContent(item) {
     this.#content.append(item);
   }
+  /**
+   * Clears existing content and appends new content.
+   * @param {HTMLElement} item - The element to render.
+   */
   renderContent(item) {
     this.#content.render(item);
   }
+  /**
+   * Appends a footer item to the modal.
+   * @param {HTMLElement} item - The element to append.
+   */
   appendFooter(item) {
     this.#footer.append(item);
   }
+
+  #setDefaultStyles() {
+    this.#styles = {
+      background: "#fff",
+      padding: "20px",
+      borderRadius: "5px",
+      minWidth: "300px",
+      maxWidth: "500px",
+      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+      fontFamily: "Arial, sans-serif",
+    };
+    this.setStyles(this.#styles);
+  }
+
   /**
    * Creates the modal host element, attaches a Shadow DOM, injects styling,
    * and returns the host element.
@@ -76,21 +143,6 @@ export default class SimpleModal {
     const modalContainer = document.createElement("div");
     modalContainer.id = "data-modal";
 
-    // Create a style element for the modal encapsulated within Shadow DOM.
-    const style = document.createElement("style");
-    style.textContent = `
-      #data-modal {
-        background: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        min-width: 300px;
-        max-width: 500px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        font-family: Arial, sans-serif;
-      }
-      /* Styling for header, content, and footer could be added here if needed */
-    `;
-    shadow.appendChild(style);
     shadow.appendChild(modalContainer);
 
     return modalHost;
