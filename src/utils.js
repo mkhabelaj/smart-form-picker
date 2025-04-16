@@ -62,3 +62,36 @@ export function createPDF(template, filename) {
   const doc = getGeneratedJsPDF(template);
   doc.save(`${filename}.pdf`);
 }
+
+/**
+ * Injects a Blob into a file input element.
+ * @param {Blob} blob - The Blob to be injected.
+ * @param {HTMLInputElement} target - The target file input element.
+ * @param {string} fileName - The name of the file to be injected.
+ * @throws {Error} If the target element is not a file input.
+ * @throws {Error} If there is an error injecting the blob.
+ * @returns {void}
+ */
+export function injectBlobToFile(
+  blob,
+  target,
+  fileName,
+  defaultfileType = "text/plain",
+) {
+  // assume target is a file input
+  if (!target.files) {
+    throw new Error("Target element is not a file input.");
+  }
+
+  try {
+    const file = new File([blob], fileName, {
+      type: blob.type || defaultfileType,
+    });
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    target.files = dataTransfer.files;
+    target.dispatchEvent(new Event("change", { bubbles: true }));
+  } catch (error) {
+    throw new Error(`Error injecting blob: ${error.message}`);
+  }
+}

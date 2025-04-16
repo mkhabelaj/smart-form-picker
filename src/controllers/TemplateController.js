@@ -4,7 +4,7 @@ import { fetchData, fetchText, setStorage, getStorage } from "../api.js";
 import SimpleElementBuilder from "../builders/SimpleElementBuilder.js";
 import SimplePopup from "../popups/simple-popup/SimplePopup.js";
 import { Toast } from "../toasts/Toast.js";
-import { createPDF, getGeneratedJsPDF } from "../utils.js";
+import { createPDF, getGeneratedJsPDF, injectBlobToFile } from "../utils.js";
 
 export default class TemplateController {
   #textArea;
@@ -519,17 +519,12 @@ export default class TemplateController {
                     // Create a File object for the PDF.
                     const fileName =
                       (fileNameInput.value.trim() || "template") + ".pdf";
-                    const pdfFile = new File([pdfBlob], fileName, {
-                      type: "application/pdf",
-                    });
 
-                    // Use the DataTransfer API to simulate a user file selection.
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(pdfFile);
-                    fileInput.files = dataTransfer.files;
-                    // Dispatch a change event in case the page listens for it.
-                    fileInput.dispatchEvent(
-                      new Event("change", { bubbles: true }),
+                    injectBlobToFile(
+                      pdfBlob,
+                      fileInput,
+                      fileName,
+                      "application/pdf",
                     );
 
                     popup.close();

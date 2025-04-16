@@ -2,6 +2,7 @@ import SimpleModal from "../modals/modals/simple-modal/SimpleModal.js";
 import { fetchData, fetchBlob } from "../api.js";
 import GenericElement from "../elements/GenericElement.js";
 import { Toast } from "../toasts/Toast.js";
+import { injectBlobToFile } from "../utils.js";
 
 export default class FileUploadController {
   constructor() {
@@ -82,28 +83,14 @@ export default class FileUploadController {
         const fileInput = formData.get("file-list");
         const targetInput = targetMap.get(selectedTargetId);
         const blob = await fetchBlob(resourceMap[fileInput]);
-        this.#injectBlob(blob, targetInput, resourceMap[fileInput]);
+        injectBlobToFile(blob, targetInput, resourceMap[fileInput]);
+        this.toast.success(`${resourceMap[fileInput]} successfully uploaded.`);
+        this.modal.close();
       } catch (error) {
+        console.error("Error uploading file:", error);
         this.toast.error("Error uploading file.");
       }
     };
-  }
-
-  #injectBlob(blob, target, fileName) {
-    try {
-      const file = new File([blob], fileName, {
-        type: blob.type || "text/plain",
-      });
-      const dataTransfer = new DataTransfer();
-      dataTransfer.items.add(file);
-      target.files = dataTransfer.files;
-      target.dispatchEvent(new Event("change", { bubbles: true }));
-      this.toast.success(`${fileName} successfully injected.`);
-      this.modal.close();
-    } catch (error) {
-      this.toast.error("Error injecting file.");
-      console.error("Error injecting file:", error);
-    }
   }
 
   #createContainer() {
