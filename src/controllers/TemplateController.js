@@ -115,10 +115,10 @@ export default class TemplateController {
           },
         });
 
-        const saveAsInput = new GenericElement("input", {
-          attributes: { type: "text", placeholder: "Template Name" },
-          styles: { borderRadius: "5px", padding: "5px" },
+        const saveAsInput = this.elementbuilder.input.build({
+          attributes: { placeholder: "Template Name" },
         });
+
         container.appendChild(saveAsInput);
 
         const savePopupButton =
@@ -126,7 +126,7 @@ export default class TemplateController {
             "Save",
             async () => {
               try {
-                const templateName = saveAsInput.get().value;
+                const templateName = saveAsInput.value;
                 const template = textArea.value;
                 if (templateName === "") {
                   throw new Error("Template name cannot be empty");
@@ -358,14 +358,9 @@ export default class TemplateController {
           });
 
           // File name input field (without extension)
-          const fileNameInput = new GenericElement("input", {
+          const fileNameInput = this.elementbuilder.input.build({
             attributes: {
-              type: "text",
               placeholder: "File Name (without extension)",
-            },
-            styles: {
-              borderRadius: "5px",
-              padding: "5px",
             },
           });
           container.appendChild(fileNameInput);
@@ -376,8 +371,7 @@ export default class TemplateController {
               "Download as TXT",
               async () => {
                 try {
-                  const fileName =
-                    fileNameInput.get().value.trim() || "template";
+                  const fileName = fileNameInput.value.trim() || "template";
                   const template = textArea.value;
                   // Create a Blob with plain text.
                   const blob = new Blob([template], { type: "text/plain" });
@@ -401,8 +395,7 @@ export default class TemplateController {
               "Download as PDF",
               async () => {
                 try {
-                  const fileName =
-                    fileNameInput.get().value.trim() || "template";
+                  const fileName = fileNameInput.value.trim() || "template";
                   const template = textArea.value;
                   // Ensure jsPDF is loaded; if not, the operation cannot proceed.
                   if (typeof jsPDF === "undefined") {
@@ -482,14 +475,9 @@ export default class TemplateController {
             container.appendChild(inputSelect.get());
 
             // Create an input field for the PDF filename (without extension)
-            const fileNameInput = new GenericElement("input", {
+            const fileNameInput = this.elementbuilder.input.build({
               attributes: {
-                type: "text",
                 placeholder: "Enter PDF File Name",
-              },
-              styles: {
-                borderRadius: "5px",
-                padding: "5px",
               },
             });
             container.appendChild(fileNameInput);
@@ -523,7 +511,7 @@ export default class TemplateController {
 
                     // Create a File object for the PDF.
                     const fileName =
-                      (fileNameInput.get().value.trim() || "template") + ".pdf";
+                      (fileNameInput.value.trim() || "template") + ".pdf";
                     const pdfFile = new File([pdfBlob], fileName, {
                       type: "application/pdf",
                     });
