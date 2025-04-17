@@ -1,3 +1,5 @@
+import GenericElement from "./GenericElement";
+
 const buttonSize = {
   small: "small",
   medium: "medium",
@@ -17,7 +19,7 @@ class Button {
    * @param {string|null} value - Optional value for the button element.
    */
   constructor(text = "Button", onClick = null, styles = {}, value = null) {
-    this.#button = document.createElement("button");
+    this.#button = new GenericElement("button");
 
     // Set the button content. If a value is provided, assign it as the button's value.
     this.setContent(text, value);
@@ -38,9 +40,7 @@ class Button {
    */
   setStyles(styles) {
     this.#styles = styles;
-    Object.keys(styles).forEach((key) => {
-      this.#button.style[key] = styles[key];
-    });
+    this.#button.setStyles(styles);
   }
 
   /**
@@ -50,9 +50,7 @@ class Button {
    */
   mergeStyles(styles) {
     this.#styles = { ...this.#styles, ...styles };
-    Object.keys(styles).forEach((key) => {
-      this.#button.style[key] = styles[key];
-    });
+    this.#button.setStyles(this.#styles);
   }
 
   /**
@@ -62,7 +60,7 @@ class Button {
    * @param {string} value - The CSS value to assign.
    */
   setStyle(property, value) {
-    this.#button.style[property] = value;
+    this.#button.setStyle(property, value);
   }
 
   /**
@@ -73,9 +71,9 @@ class Button {
    * @param {string} [value] - Optional value attribute for the button.
    */
   setContent(text, value) {
-    this.#button.textContent = text;
+    this.#button.setContent(text);
     if (value !== undefined && value !== null) {
-      this.#button.value = value;
+      this.#button.setAttributes({ value: value });
     }
   }
 
@@ -85,7 +83,7 @@ class Button {
    * @param {string} color - A valid CSS border color.
    */
   setBorderColor(color) {
-    this.#button.style.borderColor = color;
+    this.#button.setStyle("borderColor", color);
   }
 
   /**
@@ -134,7 +132,7 @@ class Button {
    * @returns {HTMLElement} The button element.
    */
   get() {
-    return this.#button;
+    return this.#button.get();
   }
 }
 
