@@ -3,6 +3,7 @@ import ModalHeader from "../../modal-blocks/ModalHeader.js";
 import ModalContent from "../../modal-blocks/ModalContent.js";
 import ModalFooter from "../../modal-blocks/ModalFooter.js";
 import SimpleModalElementBuilder from "../../../builders/SimpleElementBuilder.js";
+import GenericElement from "../../../elements/GenericElement.js";
 /**
  * Class SimpleModel
  * A composite class that brings together Overlay, ModelHeader, ModelContent, and ModelFooter
@@ -74,9 +75,10 @@ export default class SimpleModal {
    * @param {string} title - The title to set.
    */
   title(title) {
-    const h2 = document.createElement("h2");
-    h2.textContent = title;
-    this.#header.append(h2);
+    const h2 = new GenericElement("h2", {
+      content: title,
+    });
+    this.#header.append(h2.get());
   }
   /**
    * Closes the modal by removing the overlay from the DOM.

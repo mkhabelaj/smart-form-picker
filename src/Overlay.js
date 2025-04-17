@@ -1,3 +1,5 @@
+import GenericElement from "./elements/GenericElement";
+
 /**
  * Class Overlay
  * Represents the overlay container that acts as the backdrop for the modal.
@@ -14,19 +16,21 @@ export default class Overlay {
    * @returns {HTMLElement} The overlay div element.
    */
   #create() {
-    const overlay = document.createElement("div");
-    overlay.id = "data-modal-overlay";
-    overlay.style.position = "fixed";
-    overlay.style.top = "0";
-    overlay.style.left = "0";
-    overlay.style.width = "100%";
-    overlay.style.height = "100%";
-    overlay.style.background = "rgba(0,0,0,0.5)";
-    overlay.style.display = "flex";
-    overlay.style.alignItems = "center";
-    overlay.style.justifyContent = "center";
-    overlay.style.zIndex = 10000;
-    return overlay;
+    const overlay = new GenericElement("div", {
+      styles: {
+        position: "fixed",
+        top: "0",
+        left: "0",
+        width: "100%",
+        height: "100%",
+        background: "rgba(0,0,0,0.5)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 10000,
+      },
+    });
+    return overlay.get();
   }
 
   /**

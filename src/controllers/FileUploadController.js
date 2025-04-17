@@ -107,11 +107,20 @@ export default class FileUploadController {
 
   // Creates two sub-containers: one for the target selector and one for the file selector.
   #createSubContainers() {
-    const targetContainer = document.createElement("div");
-    targetContainer.style.width = "100%";
-    const fileContainer = document.createElement("div");
-    fileContainer.style.width = "100%";
-    return { targetContainer, fileContainer };
+    const targetContainer = new GenericElement("div", {
+      styles: {
+        width: "100%",
+      },
+    });
+    const fileContainer = new GenericElement("div", {
+      styles: {
+        width: "100%",
+      },
+    });
+    return {
+      targetContainer: targetContainer.get(),
+      fileContainer: fileContainer.get(),
+    };
   }
 
   // Builds and returns a <select> element for choosing files,

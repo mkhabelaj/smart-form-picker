@@ -385,10 +385,13 @@ export default class TemplateController {
                     // Create a Blob with plain text.
                     const blob = new Blob([template], { type: "text/plain" });
                     const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = `${fileName}.txt`;
-                    a.click();
+                    const a = new GenericElement("a", {
+                      attributes: {
+                        href: url,
+                        download: `${fileName}.txt`,
+                      },
+                    });
+                    a.get().click();
                     URL.revokeObjectURL(url);
                     popup.close();
                     this.toast.success(`TXT saved as ${fileName}.txt`);

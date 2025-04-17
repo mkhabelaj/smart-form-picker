@@ -35,16 +35,16 @@ export default class FormPickerController {
    * @param {Object} dataObj - The profile data object.
    */
   #profileRender(dataObj) {
-    const section = document.createElement("section");
+    const section = new GenericElement("section");
     for (const key in dataObj) {
-      const details = document.createElement("details");
-      const summary = document.createElement("summary");
-      summary.textContent = key;
-      details.append(summary);
-      details.append(this.#keyPairToUl(dataObj[key]));
-      section.append(details);
+      const details = new GenericElement("details");
+      const summary = new GenericElement("summary");
+      summary.setContent(key);
+      details.appendChild(summary);
+      details.appendChild(this.#keyPairToUl(dataObj[key]));
+      section.appendChild(details);
     }
-    this.modal.renderContent(section);
+    this.modal.renderContent(section.get());
   }
 
   /**

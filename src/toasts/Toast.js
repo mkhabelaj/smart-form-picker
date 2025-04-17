@@ -1,3 +1,4 @@
+import GenericElement from "../elements/GenericElement.js";
 export class Toast {
   /**
    * Creates a Toast instance with an optional config.
@@ -13,14 +14,11 @@ export class Toast {
     // Check if a container already exists; if not, create one.
     this.toastContainer = document.getElementById("toast-container");
     if (!this.toastContainer) {
-      this.toastContainer = document.createElement("div");
-      this.toastContainer.id = "toast-container";
-      // Apply container styles based on the selected position.
-      Object.assign(
-        this.toastContainer.style,
-        this.#getContainerStyle(this.position),
-      );
-      document.body.appendChild(this.toastContainer);
+      this.toastContainer = new GenericElement("div", {
+        attributes: { id: "toast-container" },
+        styles: this.#getContainerStyle(this.position),
+      });
+      document.body.appendChild(this.toastContainer.get());
     }
   }
 
@@ -93,10 +91,6 @@ export class Toast {
    * @param {number} [duration=3000] - Duration in milliseconds to display the toast.
    */
   show(message, type = "success", duration = 3000) {
-    const toast = document.createElement("div");
-    toast.className = "toast";
-    toast.textContent = message;
-
     // Set the background color based on the type.
     let backgroundColor;
     switch (type) {
@@ -113,31 +107,33 @@ export class Toast {
         backgroundColor = "#333"; // default dark gray
     }
 
-    // Apply inline styles to the toast element.
-    Object.assign(toast.style, {
-      minWidth: "200px",
-      margin: "5px 0",
-      padding: "12px 20px",
-      color: "#fff",
-      backgroundColor,
-      borderRadius: "4px",
-      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-      opacity: "0",
-      transition: "opacity 0.5s ease-in-out",
+    const toast = new GenericElement("div", {
+      attributes: { class: "toast" },
+      content: message,
+      styles: {
+        minWidth: "200px",
+        margin: "5px 0",
+        padding: "12px 20px",
+        color: "#fff",
+        backgroundColor,
+        borderRadius: "4px",
+        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+        opacity: "0",
+        transition: "opacity 0.5s ease-in-out",
+      },
     });
-
-    this.toastContainer.appendChild(toast);
+    this.toastContainer.appendChild(toast.get());
 
     // Force reflow before triggering the fade-in.
-    window.getComputedStyle(toast).opacity;
-    toast.style.opacity = "1";
+    window.getComputedStyle(toast.get()).opacity;
+    toast.setStyle("opacity", "1");
 
     // Remove the toast after the duration.
     setTimeout(() => {
-      toast.style.opacity = "0";
+      toast.setStyle("opacity", "0");
       toast.addEventListener("transitionend", () => {
-        if (toast.parentNode === this.toastContainer) {
-          this.toastContainer.removeChild(toast);
+        if (toast.get().parentNode === this.toastContainer) {
+          this.toastContainer.removeChild(toast.get());
         }
       });
     }, duration);

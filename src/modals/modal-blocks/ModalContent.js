@@ -1,3 +1,5 @@
+import GenericElement from "../../elements/GenericElement";
+
 /**
  * Class ModelContent
  * Represents the content section of the modal.
@@ -10,14 +12,17 @@ export default class ModalContent {
 
   /**
    * Creates the content element with a dedicated ID.
-   * @returns {HTMLElement} The content div element.
+   * @returns {GenericElement} The content div element.
    */
   #create() {
-    const content = document.createElement("main");
-    content.style.border = "1px solid #000000";
-    content.style.padding = "3px";
-    content.style.marginBottom = "3px";
-    content.id = "modal-content";
+    const content = new GenericElement("main", {
+      attributes: { id: "modal-content" },
+      styles: {
+        border: "1px solid #000000",
+        padding: "3px",
+        marginBottom: "3px",
+      },
+    });
     return content;
   }
 
@@ -26,7 +31,7 @@ export default class ModalContent {
    * @returns {HTMLElement} The content element.
    */
   get() {
-    return this.content;
+    return this.content.get();
   }
 
   /**
@@ -34,14 +39,14 @@ export default class ModalContent {
    * @param {HTMLElement} item - The element to append.
    */
   append(item) {
-    this.content.append(item);
+    this.content.appendChild(item);
   }
 
   /**
    * Clears the content area.
    */
   clear() {
-    this.content.innerHTML = "";
+    this.content.setHTML("");
   }
 
   /**
@@ -50,6 +55,6 @@ export default class ModalContent {
    */
   render(item) {
     this.clear();
-    this.content.append(item);
+    this.content.appendChild(item);
   }
 }

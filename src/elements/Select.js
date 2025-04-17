@@ -79,7 +79,6 @@ export default class Select {
    * @param {string} [value] - An optional value if a separate name parameter is used.
    */
   addOption(option, value) {
-    // let opt = document.createElement("option");
     let opt = new GenericElement("option");
     // If two parameters are provided, treat the first as display text and the second as its value.
     if (value !== undefined) {

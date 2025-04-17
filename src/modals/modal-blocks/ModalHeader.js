@@ -1,3 +1,4 @@
+import GenericElement from "../../elements/GenericElement";
 /**
  * Class ModelHeader
  * Represents the header section of the modal.
@@ -5,20 +6,23 @@
  */
 export default class ModalHeader {
   constructor() {
-    this.header = this.create();
+    this.header = this.#create();
   }
 
   /**
    * Creates the header element with basic styling.
-   * @returns {HTMLElement} The header div element.
+   * @returns {GenericElement} The header div element.
    */
-  create() {
-    const header = document.createElement("header");
-    header.style.display = "flex";
-    header.style.gap = "2px";
-    header.style.flexDirection = "column";
-    header.style.marginBottom = "5px";
-    header.style.padding = "1px";
+  #create() {
+    const header = new GenericElement("header", {
+      styles: {
+        display: "flex",
+        gap: "2px",
+        flexDirection: "column",
+        marginBottom: "5px",
+        padding: "1px",
+      },
+    });
     return header;
   }
 
@@ -27,7 +31,7 @@ export default class ModalHeader {
    * @returns {HTMLElement} The header element.
    */
   get() {
-    return this.header;
+    return this.header.get();
   }
 
   /**
@@ -35,6 +39,6 @@ export default class ModalHeader {
    * @param {HTMLElement} item - The element to append.
    */
   append(item) {
-    this.header.append(item);
+    this.header.appendChild(item);
   }
 }
