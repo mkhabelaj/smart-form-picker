@@ -120,11 +120,11 @@ export default class SimpleModal {
     this.#styles = {
       background: "#fff",
       padding: "20px",
-      borderRadius: "5px",
-      minWidth: "300px",
-      maxWidth: "500px",
-      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
-      fontFamily: "Arial, sans-serif",
+      "border-radius": "5px",
+      "min-width": "300px",
+      "max-width": "500px",
+      "box-shadow": "0 2px 8px rgba(0, 0, 0, 0.3)",
+      "font-family": "Arial, sans-serif",
     };
     this.setStyles(this.#styles);
   }

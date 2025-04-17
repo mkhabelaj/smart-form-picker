@@ -3,10 +3,11 @@ import { InputBuilder } from "./build-elements/Input.js";
 import { SelectBuilder } from "./build-elements/Select.js";
 
 /**
- * A builder class for creating HTML elements.
+ * A builder for creating HTML elements.
  */
-export default SimpleModalElementBuilder = {
+const SimpleModalElementBuilder = {
   buttons: ModalButtonBuilder,
   select: SelectBuilder,
   input: InputBuilder,
 };
+export default SimpleModalElementBuilder;

@@ -105,7 +105,7 @@ export default class Select {
     const options = this.#select.get().options;
     for (let i = 0; i < options.length; i++) {
       if (options[i].value === value) {
-        this.#select.remove(i);
+        this.#select.get().remove(i);
         break;
       }
     }

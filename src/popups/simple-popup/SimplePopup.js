@@ -65,8 +65,8 @@ export default class SimplePopup {
       background: "#fff",
       border: "1px solid #ccc",
       "border-radius": "5px",
-      boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
-      minWidth: "200px",
+      "box-shadow": "0 0 10px rgba(0, 0, 0, 0.2)",
+      "min-width": "200px",
       padding: "10px",
     };
     this.setStyles(this.#styles);
