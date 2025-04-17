@@ -2,6 +2,7 @@
   "name": "smart-form-picker",
   "private": true,
   "devDependencies": {
+    "@happy-dom/global-registrator": "^17.4.4",
     "@types/bun": "latest"
   },
   "peerDependencies": {
