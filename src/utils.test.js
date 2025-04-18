@@ -4,7 +4,6 @@
 //   bun test --dom
 
 import { describe, test, expect, beforeEach } from "bun:test";
-import jsPDF from "jspdf";
 import { getGeneratedJsPDF, createPDF, injectBlobToFile } from "./utils.js";
 
 describe("PDF Helpers", () => {
