@@ -5,8 +5,8 @@ import SimpleElementBuilder from "../builders/SimpleElementBuilder.js";
 import SimplePopup from "../popups/simple-popup/SimplePopup.js";
 import { Toast } from "../toasts/Toast.js";
 import {
-  createPDF,
-  getGeneratedJsPDF,
+  createGoogleDocLikePDF,
+  getGeneratedGoogleLikeJsPDF,
   getInputLabelContent,
   injectBlobToFile,
 } from "../utils.js";
@@ -422,7 +422,7 @@ export default class TemplateController {
                       this.toast.error("No text available to download!");
                       throw new Error("No text available to download!");
                     }
-                    createPDF(template, fileName);
+                    createGoogleDocLikePDF(template, fileName);
                     popup.close();
                     this.toast.success(`PDF saved as ${fileName}.pdf`);
                   } catch (error) {
@@ -518,7 +518,7 @@ export default class TemplateController {
                       this.toast.error("No text available to upload!");
                       throw new Error("No text available to upload!");
                     }
-                    const doc = getGeneratedJsPDF(text);
+                    const doc = getGeneratedGoogleLikeJsPDF(text);
 
                     // Generate the PDF as a Blob.
                     const pdfBlob = doc.output("blob");

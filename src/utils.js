@@ -5,7 +5,7 @@ import jsPDF from "jspdf";
  * @param {string} template - The text content to be included in the PDF.
  * @returns {jsPDF} A jsPDF document with Google Doc-like styling.
  */
-export function getGeneratedJsPDF(template) {
+export function getGeneratedGoogleLikeJsPDF(template) {
   // Create a new jsPDF instance with letter format (common for Google Docs exports) and point units.
   const doc = new jsPDF({
     unit: "pt", // Points as the unit (1 pt ≈ 1/72 inch)
@@ -58,8 +58,8 @@ export function getGeneratedJsPDF(template) {
  * @param {string} filename - The filename for the generated PDF.
  * @returns {jsPDF} A jsPDF document with Google Doc-like styling.
  */
-export function createPDF(template, filename) {
-  const doc = getGeneratedJsPDF(template);
+export function createGoogleDocLikePDF(template, filename) {
+  const doc = getGeneratedGoogleLikeJsPDF(template);
   doc.save(`${filename}.pdf`);
   return doc;
 }

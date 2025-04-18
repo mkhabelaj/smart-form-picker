@@ -5,7 +5,7 @@
 
 import { describe, test, expect, beforeEach } from "bun:test";
 import {
-  getGeneratedJsPDF,
+  getGeneratedGoogleLikeJsPDF as getGeneratedJsPDF,
   injectBlobToFile,
   getInputLabelContent,
   makeDraggable,
