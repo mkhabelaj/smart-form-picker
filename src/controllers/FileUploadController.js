@@ -2,7 +2,7 @@ import SimpleModal from "../modals/modals/simple-modal/SimpleModal.js";
 import { fetchData, fetchBlob } from "../api.js";
 import GenericElement from "../elements/GenericElement.js";
 import { Toast } from "../toasts/Toast.js";
-import { injectBlobToFile } from "../utils.js";
+import { getInputLabelContent, injectBlobToFile } from "../utils.js";
 
 export default class FileUploadController {
   constructor() {
@@ -161,7 +161,8 @@ export default class FileUploadController {
 
     // Create options from the targetMap identifiers.
     for (const [id] of targetMap.entries()) {
-      targetSelect.addOption(id, id);
+      const label = getInputLabelContent(targetMap.get(id));
+      targetSelect.addOption(label || id, id);
     }
 
     return targetSelect.get();

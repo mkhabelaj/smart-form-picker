@@ -4,7 +4,12 @@ import { fetchData, fetchText, setStorage, getStorage } from "../api.js";
 import SimpleElementBuilder from "../builders/SimpleElementBuilder.js";
 import SimplePopup from "../popups/simple-popup/SimplePopup.js";
 import { Toast } from "../toasts/Toast.js";
-import { createPDF, getGeneratedJsPDF, injectBlobToFile } from "../utils.js";
+import {
+  createPDF,
+  getGeneratedJsPDF,
+  getInputLabelContent,
+  injectBlobToFile,
+} from "../utils.js";
 
 export default class TemplateController {
   #textArea;
@@ -481,9 +486,7 @@ export default class TemplateController {
               "-- Select Upload Input --",
             );
             fileInputs.forEach((input, index) => {
-              const label = input.name
-                ? `${input.name} (${index + 1})`
-                : `File Input ${index + 1}`;
+              const label = `File Input ${index + 1} (${getInputLabelContent(input)})`;
               inputSelect.addOption(label, index.toString());
             });
             container.appendChild(inputSelect.get());

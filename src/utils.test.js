@@ -4,7 +4,11 @@
 //   bun test --dom
 
 import { describe, test, expect, beforeEach } from "bun:test";
-import { getGeneratedJsPDF, createPDF, injectBlobToFile } from "./utils.js";
+import {
+  getGeneratedJsPDF,
+  injectBlobToFile,
+  getInputLabelContent,
+} from "./utils.js";
 
 describe("PDF Helpers", () => {
   test("getGeneratedJsPDF returns a jsPDF instance with one page and embeds text", () => {
@@ -61,5 +65,55 @@ describe("injectBlobToFile", () => {
     expect(file.name).toBe("hello.txt");
     expect(file.type).toBe("text/plain");
     expect(changed).toBe(true);
+  });
+});
+
+describe("getInputLabelContent", () => {
+  beforeEach(() => {
+    document.body.innerHTML = "";
+  });
+
+  test("returns label text when an associated <label> exists", () => {
+    document.body.innerHTML = `
+      <label for="input1">My Label</label>
+      <input id="input1" />
+    `;
+    const input = document.getElementById("input1");
+    expect(getInputLabelContent(input)).toBe("My Label");
+  });
+
+  test("returns name when no label is present", () => {
+    const input = document.createElement("input");
+    input.name = "username";
+    document.body.appendChild(input);
+    expect(getInputLabelContent(input)).toBe("username");
+  });
+
+  test("returns placeholder when no label or name is present", () => {
+    const input = document.createElement("input");
+    input.placeholder = "Enter text";
+    document.body.appendChild(input);
+    expect(getInputLabelContent(input)).toBe("Enter text");
+  });
+
+  test("returns id when no label, name, or placeholder is present", () => {
+    const input = document.createElement("input");
+    input.id = "some-id";
+    document.body.appendChild(input);
+    expect(getInputLabelContent(input)).toBe("some-id");
+  });
+
+  test("returns name over id when both are present", () => {
+    const input = document.createElement("input");
+    input.id = "some-id";
+    input.name = "user";
+    document.body.appendChild(input);
+    expect(getInputLabelContent(input)).toBe("user");
+  });
+
+  test("returns empty string when no label, name, placeholder, or id is present", () => {
+    const input = document.createElement("input");
+    document.body.appendChild(input);
+    expect(getInputLabelContent(input)).toBe("");
   });
 });

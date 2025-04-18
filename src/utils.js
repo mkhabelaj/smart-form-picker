@@ -96,3 +96,25 @@ export function injectBlobToFile(
     throw new Error(`Error injecting blob: ${error.message}`);
   }
 }
+
+/**
+ * Returns the content of the label element associated with the input element.
+ * If no label element is found, it returns the name, placeholder, or id of the input element.
+ *
+ * @param {HTMLInputElement} input - The input element.
+ * @returns {string} The content of the label element.
+ */
+export function getInputLabelContent(input) {
+  // To be sure of the label we need get the label element by the for attribute
+  const id = input.getAttribute("id");
+  let label = null;
+
+  if (id !== null) {
+    label = document.querySelector(`label[for="${id}"]`);
+  }
+
+  if (label !== null) {
+    return label.textContent;
+  }
+  return input.name || input.placeholder || input.id || "";
+}
