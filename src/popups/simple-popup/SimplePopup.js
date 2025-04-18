@@ -1,5 +1,6 @@
 import GenericElement from "../../elements/GenericElement.js";
 import SimpleElementBuilder from "../../builders/SimpleElementBuilder.js";
+import { makeDraggable } from "../../utils.js";
 
 /**
  * Class SimplePopup
@@ -32,7 +33,20 @@ export default class SimplePopup {
     this.#popup.append(this.#footer);
 
     this.setTitle(title);
+    this.makeDraggable();
     this.#addCloseButton();
+  }
+
+  makeDraggable() {
+    const dragHandle = new GenericElement("span", {
+      content: "⠿",
+      styles: {
+        cursor: "move",
+        "font-size": "30px",
+      },
+    });
+    this.#header.append(dragHandle.get());
+    makeDraggable(this.#popup, dragHandle.get());
   }
 
   /**
@@ -96,8 +110,7 @@ export default class SimplePopup {
     const header = new GenericElement("header", {
       styles: {
         display: "flex",
-        flexDirection: "column",
-        gap: "5px",
+        justifyContent: "space-between",
         marginBottom: "10px",
       },
     });

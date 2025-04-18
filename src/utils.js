@@ -118,3 +118,39 @@ export function getInputLabelContent(input) {
   }
   return input.name || input.placeholder || input.id || "";
 }
+
+/**
+ * Makes an element draggable.
+ * @param {HTMLElement} container - The element to make draggable.
+ * @param {HTMLElement} handle - The element to use as the drag handle.
+ */
+export function makeDraggable(container, handle) {
+  let dragging = false;
+  let startX, startY, origX, origY;
+
+  handle.addEventListener("mousedown", onMouseDown);
+  document.addEventListener("mousemove", onMouseMove);
+  document.addEventListener("mouseup", onMouseUp);
+
+  function onMouseDown(e) {
+    dragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    const style = getComputedStyle(container);
+    origX = parseInt(style.left, 10);
+    origY = parseInt(style.top, 10);
+    e.preventDefault(); // prevents text selection
+  }
+
+  function onMouseMove(e) {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    container.style.left = `${origX + dx}px`;
+    container.style.top = `${origY + dy}px`;
+  }
+
+  function onMouseUp() {
+    dragging = false;
+  }
+}
