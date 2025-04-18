@@ -18,11 +18,11 @@ jobs:
     steps:
       # 1. Check out your code
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # 2. Install Bun
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v3
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: ${{ matrix.bun-version }}
 
