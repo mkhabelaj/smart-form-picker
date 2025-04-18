@@ -56,11 +56,12 @@ export function getGeneratedJsPDF(template) {
  * Creates a PDF document Google Doc-like styling.
  * @param {string} template - The text content to be included in the PDF.
  * @param {string} filename - The filename for the generated PDF.
- * @returns {void}
+ * @returns {jsPDF} A jsPDF document with Google Doc-like styling.
  */
 export function createPDF(template, filename) {
   const doc = getGeneratedJsPDF(template);
   doc.save(`${filename}.pdf`);
+  return doc;
 }
 
 /**
