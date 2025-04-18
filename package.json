@@ -10,7 +10,9 @@
   },
   "scripts": {
     "build:content": "bun build src/main.js --outfile=dist/content.bundle.js",
-    "build:watch": "bun run build:content --watch"
+    "build:watch": "bun run build:content --watch",
+    "test": "bun test --dom",
+    "test:watch": "bun run test --watch"
   },
   "dependencies": {
     "jspdf": "^3.0.1"
