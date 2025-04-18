@@ -17,6 +17,12 @@ export default class SimpleModal {
   #modal;
   #styles;
   #modalContainer;
+
+  /**
+   * Constructor for the SimpleModal class.
+   * @param {string} title - The title of the modal.
+   * @param {Object} styles - An object containing css properties and values.
+   */
   constructor(title = "Modal", { styles = {} } = {}) {
     // Create overlay and modal sections.
     this.elementBuilder = SimpleModalElementBuilder;
@@ -63,7 +69,17 @@ export default class SimpleModal {
 
   /**
    * Merges styles into the existing styles of the modal.
+   * The currt defined are:
+   *       background: "#fff",
+   *       padding: "20px",
+   *      "border-radius": "5px",
+   *      "box-shadow": "0 0 10px rgba(0, 0, 0, 0.2)",
+   *      fontFamily: "Arial, sans-serif"
+   *      "min-width": "300px",
+   *      "max-width": "500px"
+   *
    * @param {Object} styles - An object containing css properties and values.
+   * @returns {void}
    */
   mergeStyles(styles) {
     const mergedStyles = { ...this.#styles, ...styles };
