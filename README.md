@@ -19,8 +19,34 @@ The modal interface is implemented using the Shadow DOM to encapsulate its UI an
 
 ## Features
 
-- **Manual Data Selection:**  
-  Pick from pre-defined data sets (e.g., user details or work experience) to populate form fields.
+- **Smart Form Picker:**  
+  Pick from pre-defined data sets (e.g., user details or work experience or whatever you come up with) to populate form fields.
+  Pressing `<CTRL+m>` in a focused input brings up a the Smart Form Picker.
+  
+  ![smart-form-picker](https://github.com/user-attachments/assets/dab99991-ee09-4b44-87c5-4ff7ba19055f)
+- **Smart Form Uploader**
+
+  Upload from pre-defined files, select and input and upload.
+  Pressing `<CTRL+u>`  brings up a the Smart Form Uploader.
+
+  ![smart-file-uploader](https://github.com/user-attachments/assets/26a2fc7f-3af4-481a-9112-a364e86ccfb0)
+
+- **Smart Template Picker**
+  
+  Load pre-defined template files, allowing you to modify, save modifications, upload modified templates as a pdf and copy paste.
+
+   Pressing `<CTRL+t>` brings up a the Smart Template Picker.
+
+  In the example below we load a pre-defined cover letter template, modify the place holders, save the template for later use. Then copy the modified template onto the clipboard so we can paste it into the cover letter input.
+  
+  ![smart-template-picker-fill-save-copy](https://github.com/user-attachments/assets/086c26b0-835c-46c3-ad3d-1d206b6a3dc8)
+
+  In the example below; we load the previouly saved modified template back into the text area, then make further modificaton. Once we are done with the changes, we name and upload the modified coverletter as a pdf to a selected input.
+
+  ![smart-template-picker-load-upload](https://github.com/user-attachments/assets/c2429d71-44a7-4193-a8cc-98527421b210)
+
+  
+   
 - **Shadow DOM Encapsulation:**  
   Uses a Shadow DOM in the modal interface to prevent style leakage and conflicts with the host page.
 - **Dynamic Modal Interface:**  
