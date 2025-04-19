@@ -4,6 +4,7 @@ import ModalContent from "../../modal-blocks/ModalContent.js";
 import ModalFooter from "../../modal-blocks/ModalFooter.js";
 import SimpleModalElementBuilder from "../../../builders/SimpleElementBuilder.js";
 import GenericElement from "../../../elements/GenericElement.js";
+import SimplePopup from "../../../popups/simple-popup/SimplePopup.js";
 /**
  * Class SimpleModel
  * A composite class that brings together Overlay, ModelHeader, ModelContent, and ModelFooter
@@ -17,14 +18,18 @@ export default class SimpleModal {
   #modal;
   #styles;
   #modalContainer;
+  #confirmClose;
 
   /**
    * Constructor for the SimpleModal class.
    * @param {string} title - The title of the modal.
-   * @param {Object} styles - An object containing css properties and values.
+   * @param {Object} [param1={}] - An object containing optional parameters.
+   * @param {{}} [param1.styles={}] - An object containing css properties and values.
+   * @param {*} [param1.confirmClose=False] - A boolean value indicating whether to confirm closing the modal.
    */
-  constructor(title = "Modal", { styles = {} } = {}) {
+  constructor(title = "Modal", { styles = {}, confirmClose = false } = {}) {
     // Create overlay and modal sections.
+    this.#confirmClose = confirmClose;
     this.elementBuilder = SimpleModalElementBuilder;
     this.#overlay = new Overlay();
     this.#header = new ModalHeader();
@@ -171,7 +176,51 @@ export default class SimpleModal {
     const closeButton = this.elementBuilder.buttons.build.buildDangerButton(
       "Close",
       function handler() {
-        self.close();
+        if (!self.#confirmClose) {
+          self.close();
+          document.removeEventListener("click", handler);
+          return;
+        }
+        const popup = new SimplePopup("Confirm Close");
+        const container = new GenericElement("div", {
+          styles: {
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          },
+        });
+
+        // Create a confirmation message element.
+        const confirmationMessage = new GenericElement("p", {
+          content: "Are you sure you want to close?",
+        });
+
+        container.appendChild(confirmationMessage);
+
+        // Create the confirm button.
+        const confirmButton =
+          self.elementBuilder.buttons.build.buildPrimaryButton(
+            "Yes, Close",
+            async () => {
+              popup.close();
+              self.close();
+            },
+            self.elementBuilder.buttons.buttonSize.small,
+          );
+
+        // Build a container to hold the confirm and cancel buttons.
+        const buttonContainer = new GenericElement("div", {
+          styles: {
+            display: "flex",
+            justifyContent: "space-around",
+            gap: "10px",
+          },
+        });
+        buttonContainer.appendChild(confirmButton);
+
+        // Set the popup body and footer.
+        popup.setBody(container.get());
+        popup.setFooter(buttonContainer.get());
         document.removeEventListener("click", handler);
       },
     );
