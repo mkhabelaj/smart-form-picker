@@ -1,6 +1,7 @@
 import FormPickerController from "./controllers/FormPickerController";
 import FileUploadController from "./controllers/FileUploadController";
 import TemplateController from "./controllers/TemplateController";
+import ConfigController from "./controllers/ConfigController";
 
 document.addEventListener("keydown", (event) => {
   // Ctrl+U triggers upload open.
@@ -15,6 +16,14 @@ document.addEventListener("keydown", (event) => {
   if (event.ctrlKey && event.key === "t") {
     event.preventDefault();
     new TemplateController();
+  }
+});
+//configuration
+document.addEventListener("keydown", (event) => {
+  // Ctrl+K triggers configuration
+  if (event.ctrlKey && event.key === "k") {
+    event.preventDefault();
+    new ConfigController();
   }
 });
 

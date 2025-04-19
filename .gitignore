@@ -1,6 +1,9 @@
 # Ignore the data folder and its contents
 data/
 
+# Ignore the config file
+config.json
+
 # Optionally, add other common ignores:
 node_modules/
 dist/
