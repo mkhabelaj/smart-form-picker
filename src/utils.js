@@ -154,3 +154,26 @@ export function makeDraggable(container, handle) {
     dragging = false;
   }
 }
+
+/**
+ * Checks if an input value is empty.
+ * @param {HTMLInputElement} input - The input element.
+ * @param {string} [message="Input is empty"] - The error message to display if the input value is empty.
+ * @param {Function} [ifErrorCallback=null] - The function to call if the input value is empty.
+ * @returns {void}
+ * @throws {Error} If the input value is empty.
+ */
+export function checkIfInputIsImpty(
+  input,
+  message = "Input is empty",
+  ifErrorCallback = null,
+) {
+  if (input.value.trim() === "" && ifErrorCallback !== null) {
+    ifErrorCallback();
+    throw new Error(message);
+  }
+
+  if (input.value.trim() === "") {
+    throw new Error(message);
+  }
+}

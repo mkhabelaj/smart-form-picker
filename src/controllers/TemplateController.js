@@ -5,12 +5,32 @@ import SimpleElementBuilder from "../builders/SimpleElementBuilder.js";
 import SimplePopup from "../popups/simple-popup/SimplePopup.js";
 import { Toast } from "../toasts/Toast.js";
 import {
+  checkIfInputIsImpty,
   createGoogleDocLikePDF,
   getGeneratedGoogleLikeJsPDF,
   getInputLabelContent,
   injectBlobToFile,
 } from "../utils.js";
 
+class EmptyTextAreaError extends Error {}
+
+function checkIfTextAreaIsEmpty(textArea) {
+  try {
+    checkIfInputIsImpty(textArea, "Template area is empty");
+  } catch (error) {
+    throw new EmptyTextAreaError(error.message);
+  }
+}
+
+/**
+ * @param {Error} error
+ */
+function toastEmptyTextAreaError(error) {
+  if (error instanceof EmptyTextAreaError) {
+    const toast = new Toast();
+    toast.error(error.message);
+  }
+}
 export default class TemplateController {
   #textArea;
   #container;
@@ -27,7 +47,7 @@ export default class TemplateController {
     this.#container.append(this.#textArea);
 
     this.modal = new SimpleModal("Template Picker");
-    this.modal.mergeStyles({ "min-width": "600px", "max-width": "700px" });
+    this.modal.mergeStyles({ "min-width": "700px", "max-width": "800px" });
     this.#createTemplateAreaClearButton();
     this.#createClearPopupButton();
     this.#createLoadFromButton();
@@ -35,7 +55,36 @@ export default class TemplateController {
     this.#createUploadPdfButton();
     this.#createCopyButton();
     this.#createSaveAsButton();
+    this.#createViewButton();
     this.modal.renderContent(this.#container);
+  }
+
+  /**
+   * Creates a container element and a popup element.
+   * @param {string} popupName
+   * @param {object} [styles=null] styles
+   *        default styles:
+   *        display: "flex"
+   *        flexDirection: "column"
+   *        gap: "10px"
+   *
+   * @returns {{ popup: SimplePopup, container: GenericElement }}
+   * @private
+   */
+  #createContainerAndPopup(popupName, styles = null) {
+    const popup = new SimplePopup(popupName);
+    const container = new GenericElement(
+      "div",
+      styles || {
+        styles: {
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+        },
+      },
+    );
+
+    return { popup, container };
   }
 
   #createTemplateAreaClearButton() {
@@ -46,14 +95,9 @@ export default class TemplateController {
         async () => {
           try {
             // Create a popup with a confirmation message.
-            const popup = new SimplePopup("Clear Template Area");
-            const container = new GenericElement("div", {
-              styles: {
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-              },
-            });
+            const { popup, container } = this.#createContainerAndPopup(
+              "Clear Template Area",
+            );
 
             // Create a confirmation message element.
             const confirmationMessage = new GenericElement("p", {
@@ -97,6 +141,46 @@ export default class TemplateController {
     // Append the clear button to the modal's footer.
     this.modal.appendFooter(clearTemplateButton);
   }
+
+  #createViewButton() {
+    const textArea = this.#textArea;
+    const viewButton = this.elementbuilder.buttons.build.buildPrimaryButton(
+      "Preview",
+      () => {
+        const { popup, container } =
+          this.#createContainerAndPopup("Preview Template");
+
+        const description = new GenericElement("p", {
+          styles: { "text-align": "center" },
+          content: "You can preview the template here.",
+        });
+
+        container.appendChild(description);
+        popup.setBody(container.get());
+
+        const previewExternalB =
+          this.elementbuilder.buttons.build.buildPrimaryButton(
+            "Preview",
+            async () => {
+              try {
+                const template = textArea.value;
+                checkIfTextAreaIsEmpty(textArea);
+                const doc = getGeneratedGoogleLikeJsPDF(template);
+
+                window.open(doc.output("bloburl"), "_blank");
+              } catch (error) {
+                toastEmptyTextAreaError(error);
+                console.error(error);
+                this.toast.error("Error creating PDF.");
+              }
+            },
+            this.elementbuilder.buttons.buttonSize.small,
+          );
+        popup.setFooter(previewExternalB);
+      },
+    );
+    this.modal.appendFooter(viewButton);
+  }
   // Creates a "Save As" button that opens a popup to let the user save the current template.
   #createSaveAsButton() {
     const savedNamesListKey = this.#savedNamesListKey;
@@ -105,14 +189,8 @@ export default class TemplateController {
     const saveAsButton = this.elementbuilder.buttons.build.buildPrimaryButton(
       "Save As",
       () => {
-        const popup = new SimplePopup("Save Template As");
-        const container = new GenericElement("div", {
-          styles: {
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-          },
-        });
+        const { popup, container } =
+          this.#createContainerAndPopup("Save Template As");
 
         const saveAsInput = this.elementbuilder.input.build({
           attributes: { placeholder: "Template Name" },
@@ -127,9 +205,7 @@ export default class TemplateController {
               try {
                 const templateName = saveAsInput.value;
                 const template = textArea.value;
-                if (templateName === "") {
-                  throw new Error("Template name cannot be empty");
-                }
+                checkIfTextAreaIsEmpty(textArea);
                 // Retrieve the stored list of template names.
                 const result = await getStorage(savedNamesListKey);
                 let savedNames = result[savedNamesListKey] || [];
@@ -148,6 +224,7 @@ export default class TemplateController {
                 popup.close();
               } catch (error) {
                 console.error(error);
+                toastEmptyTextAreaError(error);
                 this.toast.error("Error saving template.");
               }
             },
@@ -172,14 +249,8 @@ export default class TemplateController {
         "Load From",
         async () => {
           try {
-            const popup = new SimplePopup("Load Template");
-            const container = new GenericElement("div", {
-              styles: {
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-              },
-            });
+            const { popup, container } =
+              this.#createContainerAndPopup("Load Template");
             // Build a dropdown (select element) with a default option.
             const loadSelect = this.elementbuilder.select.build(
               "-- Select Template --",
@@ -241,14 +312,8 @@ export default class TemplateController {
       "Delete Saved",
       async () => {
         try {
-          const popup = new SimplePopup("Clear Template");
-          const container = new GenericElement("div", {
-            styles: {
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
-            },
-          });
+          const { popup, container } =
+            this.#createContainerAndPopup("Clear Template");
           // Build a dropdown for selecting which template to clear.
           const clearSelect = this.elementbuilder.select.build(
             "-- Select Template to Clear --",
@@ -333,14 +398,12 @@ export default class TemplateController {
       async () => {
         try {
           const template = textArea.value;
-          if (template === "") {
-            this.toast.error("No text available to copy!");
-            throw new Error("No text available to copy!");
-          }
+          checkIfTextAreaIsEmpty(textArea);
           // Use the Clipboard API to write text to the clipboard.
           await navigator.clipboard.writeText(template);
           this.toast.success("Template copied to clipboard.");
         } catch (error) {
+          toastEmptyTextAreaError(error);
           console.error(error);
           this.toast.error("Error copying template.");
         }
@@ -359,14 +422,8 @@ export default class TemplateController {
         async () => {
           try {
             // Create a popup for downloading the template.
-            const popup = new SimplePopup("Download Template");
-            const container = new GenericElement("div", {
-              styles: {
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-              },
-            });
+            const { popup, container } =
+              this.#createContainerAndPopup("Download Template");
 
             // File name input field (without extension)
             const fileNameInput = this.elementbuilder.input.build({
@@ -384,10 +441,7 @@ export default class TemplateController {
                   try {
                     const fileName = fileNameInput.value.trim() || "template";
                     const template = textArea.value;
-                    if (template === "") {
-                      this.toast.error("No text available to download!");
-                      throw new Error("No text available to download!");
-                    }
+                    checkIfTextAreaIsEmpty(textArea);
                     // Create a Blob with plain text.
                     const blob = new Blob([template], { type: "text/plain" });
                     const url = URL.createObjectURL(blob);
@@ -402,6 +456,7 @@ export default class TemplateController {
                     popup.close();
                     this.toast.success(`TXT saved as ${fileName}.txt`);
                   } catch (error) {
+                    toastEmptyTextAreaError(error);
                     console.error(error);
                     this.toast.error("Error downloading TXT.");
                   }
@@ -418,14 +473,12 @@ export default class TemplateController {
                     const fileName = fileNameInput.value.trim() || "template";
                     const template = textArea.value;
 
-                    if (template === "") {
-                      this.toast.error("No text available to download!");
-                      throw new Error("No text available to download!");
-                    }
+                    checkIfTextAreaIsEmpty(textArea);
                     createGoogleDocLikePDF(template, fileName);
                     popup.close();
                     this.toast.success(`PDF saved as ${fileName}.pdf`);
                   } catch (error) {
+                    toastEmptyTextAreaError(error);
                     console.error(error);
                     this.toast.error("Error downloading PDF.");
                   }
@@ -471,14 +524,8 @@ export default class TemplateController {
             }
 
             // Create a popup for selecting the file input and naming the PDF
-            const popup = new SimplePopup("Upload PDF");
-            const container = new GenericElement("div", {
-              styles: {
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-              },
-            });
+            const { popup, container } =
+              this.#createContainerAndPopup("Upload PDF");
 
             // Create a dropdown (select) element to list each file input.
             // We’ll label them by their name attribute (if available) or by index.
@@ -514,10 +561,7 @@ export default class TemplateController {
                     const fileInput = fileInputs[parseInt(selectedIndex)];
 
                     const text = textArea.value;
-                    if (text === "") {
-                      this.toast.error("No text available to upload!");
-                      throw new Error("No text available to upload!");
-                    }
+                    checkIfTextAreaIsEmpty(textArea);
                     const doc = getGeneratedGoogleLikeJsPDF(text);
 
                     // Generate the PDF as a Blob.
@@ -537,6 +581,7 @@ export default class TemplateController {
                     popup.close();
                     this.toast.success(`PDF uploaded as ${fileName}`);
                   } catch (error) {
+                    toastEmptyTextAreaError(error);
                     console.error(error);
                     this.toast.error("Error uploading PDF.");
                   }
