@@ -637,7 +637,6 @@ export default class TemplateController {
 
       templateSelect.setOnChange(async (e) => {
         const selectedValue = e.target.value;
-        console.log(selectedValue);
         const text = await fetchText(selectedValue);
         this.#textArea.value = text;
       });
