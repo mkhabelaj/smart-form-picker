@@ -4,17 +4,26 @@ export default class GenericElement {
   /**
    * Creates a new generic HTML element.
    *
-   * @param {string} tagName - The HTML tag to create (default is "div").
-   * @param {object} options - Optional configuration settings.
-   *   options.content: String for plain text content.
-   *   options.html: String for inner HTML (overrides plain text if provided).
-   *   options.styles: An object of inline CSS styles.
-   *   options.events: An object where keys are event names and values are event handlers.
-   *   options.attributes: An object where keys are attribute names and values are attribute values.
+   * @param {string} [tagName="div"] - The HTML tag to create (default is "div").
+   * @param {Object} [param1={}]  - Optional configuration settings.
+   * @param {string} [param1.content=""] - A string for plain text content.
+   * @param {string} [param1.html=""]  - A string for inner HTML (overrides plain text if provided).
+   * @param {{}} [param1.styles={}] - An object of inline CSS styles.
+   * @param {{}} [param1.events={}] - An object where keys are event names and values are event handlers.
+   * @param {{}} [param1.attributes={}] - An object where keys are attribute names and values are attribute values.
+   * @param {Array<GenericElement|HTMLElement>} [param1.children=[]] - An array of child to append.
+   *
    */
   constructor(
     tagName = "div",
-    { content = "", html = "", styles = {}, events = {}, attributes = {} } = {},
+    {
+      content = "",
+      html = "",
+      styles = {},
+      events = {},
+      attributes = {},
+      children = [],
+    } = {},
   ) {
     this.#element = document.createElement(tagName);
 
@@ -35,6 +44,11 @@ export default class GenericElement {
 
     // Set attributes provided in the attributes object.
     this.setAttributes(attributes);
+
+    // Append children if provided.
+    children.forEach((child) => {
+      this.appendChild(child);
+    });
   }
 
   /**

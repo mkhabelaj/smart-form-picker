@@ -137,4 +137,16 @@ describe("GenericElement", () => {
     expect(first).toBeInstanceOf(HTMLElement);
     expect(second).toBe(first);
   });
+
+  describe("children constructor property", () => {
+    test("returns an array of child elements", () => {
+      const child1 = new GenericElement("span");
+      const child2 = new GenericElement("p");
+      const parent = new GenericElement("div", { children: [child1, child2] });
+      expect(Array.from(parent.get().children)).toEqual([
+        child1.get(),
+        child2.get(),
+      ]);
+    });
+  });
 });

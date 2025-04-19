@@ -61,16 +61,21 @@ export default class FormPickerController {
     try {
       for (const key in dataObj) {
         const value = dataObj[key];
-        let limited = value.slice(0, 70);
+
+        const limit = (value) => {
+          if (value.length > 50) {
+            return value.substring(0, 200) + "...";
+          }
+          return value;
+        };
         const self = this;
 
         const listItem = new GenericElement("li", {
           styles: {
             padding: "8px",
-            borderBottom: "1px solid #ddd",
+            "border-bottom": "1px solid #ddd",
             cursor: "pointer",
           },
-          content: `${key}: ${limited}`,
           events: {
             click: () => {
               self.target.value = dataObj[key];
@@ -78,6 +83,16 @@ export default class FormPickerController {
               self.toast.success(`${key} successfully populated.`);
             },
           },
+          children: [
+            new GenericElement("span", {
+              content: `${key} : `,
+              styles: { "font-weight": "bold", "font-size": "16px" },
+            }),
+            new GenericElement("span", {
+              content: limit(value),
+              styles: { "font-size": "14px", "font-style": "italic" },
+            }),
+          ],
         });
 
         list.appendChild(listItem);
