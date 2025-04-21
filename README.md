@@ -18,7 +18,8 @@
 6. [KEYBOARD SHORTCUTS](#keyboard-shortcuts)
 7. [CUSTOMIZATION & BEST PRACTICES](#customization--best-practices)
 8. [TESTING & DEVELOPMENT](#testing--development)
-9. [TROUBLESHOOTING](#troubleshooting)
+9. [QUICK START-UP: FULL EXAMPLE WITH INSTRUCTIONS](#quick-start-up-full-example-with-instructions)
+10. [TROUBLESHOOTING](#troubleshooting)
 
 ---
 
@@ -240,37 +241,182 @@
 
 6. ### KEYBOARD SHORTCUTS:
 
-- `Ctrl+M`: Opens Form Picker modal on focused input/textarea.
-- `Ctrl+T`: Opens Template Picker modal.
-- `Ctrl+U`: Opens File Upload modal.
-- `Ctrl+K`: Opens Configuration Switcher modal.
+   - `Ctrl+M`: Opens Form Picker modal on focused input/textarea.
+   - `Ctrl+T`: Opens Template Picker modal.
+   - `Ctrl+U`: Opens File Upload modal.
+   - `Ctrl+K`: Opens Configuration Switcher modal.
 
 7. ### CUSTOMIZATION & BEST PRACTICES
 
-- Clearly structure data directories for easy management.
-- Use consistent naming conventions for clarity.
-- Regularly validate JSON files to avoid syntax errors.
-- Back up your data folders externally to prevent data loss.
+   - Clearly structure data directories for easy management.
+   - Use consistent naming conventions for clarity.
+   - Regularly validate JSON files to avoid syntax errors.
+   - Back up your data folders externally to prevent data loss.
 
 8. ### TESTING & DEVELOPMENT:
 
-Scripts available via Bun (package.json):
+   Scripts available via Bun (package.json):
 
-```bash
+   ```bash
 
-• bun run build:content # Compiles content scripts.
-• bun run build:watch # Watches and recompiles content scripts on changes.
-• bun run test # Runs unit tests.
-• bun run test:watch # Continuously runs tests on file changes.
+   bun run build:content # Compiles content scripts.
+   bun run build:watch # Watches and recompiles content scripts on changes.
+   bun run test # Runs unit tests.
+   bun run test:watch # Continuously runs tests on file changes.
+   ```
+
+   Continuous Integration via GitHub Actions automatically runs unit tests on pushes and pull requests.
+
+9. ### QUICK START-UP: FULL EXAMPLE WITH INSTRUCTIONS
+
+This quick-start example demonstrates a complete, step-by-step configuration and data setup, providing everything you need to quickly start using Smart Form Picker.
+
+### STEP 1: SET UP CONFIGURATION FILE
+
+Create a new file named **config.json** at the root of your extension folder with the following content:
+
+```json
+{
+  "dataSource": "personal",
+  "sources": ["personal", "work"]
+}
 ```
 
-Continuous Integration via GitHub Actions automatically runs unit tests on pushes and pull requests.
+Explanation:
+• **personal** is the default data source loaded on startup.
+• Two sources (**personal** and **work**) are defined, allowing quick switching via **Ctrl+K**.
 
-9. ### TROUBLESHOOTING:
+---
+
+### STEP 2: CREATE DATA DIRECTORIES AND FILES
+
+Create the directory structure exactly as follows in the extension root:
+
+- data/
+  - personal/
+    - mapping.json
+    - userdata.json
+    - profile.json
+    - general.json
+    - my-resume.pdf
+    - intro-template.txt
+  - work/
+    - mapping.json
+    - userdata.json
+    - profile.json
+    - general.json
+    - work-resume.pdf
+    - business-template.txt
+
+---
+
+### STEP 3: FILL OUT YOUR DATA FILES
+
+Example content for **personal** source:
+
+**mapping.json:**
+
+```json
+{
+  "tabs": ["userdata.json", "profile.json", "general.json"],
+  "files": {
+    "My Personal Resume": "my-resume.pdf"
+  },
+  "templates": ["intro-template.txt"]
+}
+```
+
+**userdata.json (key/value format):**
+
+```json
+{
+  "name": "My Personal Info",
+  "type": "keyValue",
+  "data": {
+    "Name": "Alice Doe",
+    "Email": "alice.doe@example.com",
+    "Phone": "+1 555 987 6543"
+  }
+}
+```
+
+**profile.json (profile format):**
+
+```json
+{
+  "name": "My Career Profile",
+  "type": "profile",
+  "data": {
+    "Developer": {
+      "Position": "Software Developer",
+      "Company": "Tech Solutions Inc.",
+      "Start Date (yyyy-mm-dd)": "2021-06-01",
+      "End Date (yyyy-mm-dd)": "2024-04-15",
+      "Description (Single Newline)": "Developed client web applications.\nImproved performance by 30%.",
+      "Description (Bulleted Double Newline)": "- Developed client web applications.\n\n- Improved performance by 30%.",
+      "Description (Long Summary)": "Built numerous client-facing web apps, optimizing frontend performance significantly, leading to measurable client satisfaction improvements.",
+      "Description (Short Summary)": "Developed performant client web apps."
+    }
+  }
+}
+```
+
+**general.json (key/value format):**
+
+```json
+{
+  "name": "Additional Info",
+  "type": "keyValue",
+  "data": {
+    "Availability": "Immediate",
+    "Relocation": "No",
+    "Preferred Contact": "Email"
+  }
+}
+```
+
+**intro-template.txt:**
+
+```txt
+Dear [Recipient],
+
+My name is [Name], and I am excited about the opportunity at your organization.
+
+Best,
+[Name]
+```
+
+---
+
+### STEP 4: REPEAT FOR “WORK” SOURCE (if needed)
+
+Populate your “work” source directory similarly to “personal”, customizing data relevant for your work-related forms.
+
+STEP 5: LOAD EXTENSION INTO CHROME
+
+- Open Chrome and go to `chrome://extensions`
+- Activate “Developer Mode”.
+- Click `Load unpacked` and select your Smart Form Picker extension directory.
+
+### STEP 6: USING THE EXTENSION QUICKLY
+
+- Navigate to any web form.
+- Click on an input or textarea, then press Ctrl+M:
+- Modal opens showing your tabs (“My Personal Info”, “My Career Profile”, “Additional Info”).
+- Click a field to automatically populate the input.
+- Press Ctrl+T to open Template Picker:
+- Choose or write templates, preview, save as PDF, or copy content.
+- Press Ctrl+U to open File Upload:
+- Easily select files (e.g., resume PDF) to upload directly into web forms.
+- Press Ctrl+K to switch data sources (“personal” ↔ “work”):
+- Instantly switch the entire data context without reloading the extension.
+
+Congratulations! You now have a fully functional, user-configurable Smart Form Picker setup ready to streamline your online form-filling process.
+
+10. ### TROUBLESHOOTING:
 
 Common Issues:
 
 - Tabs or templates not loading: Check mapping.json paths, file existence, and JSON validity.
 - PDF upload issues: Ensure page has file input fields; verify correct input selected in the dropdown.
-
 
