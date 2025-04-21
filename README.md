@@ -9,15 +9,15 @@
 1. [INTRODUCTION](#introduction)
 2. [INSTALLATION](#installation)
 3. [PROJECT STRUCTURE](#project-structure)
-4. [CONFIGURATION & DATA SETUP](###configuration-and-data-setup)
-5. [Usage & Features](#usage-and-features)
+4. [CONFIGURATION & DATA SETUP](#configuration--data-setup-important)
+5. [Usage & Features](#usage--features)
    - Form Picker
    - Template Picker
    - File Upload
    - Configuration Switcher
 6. [KEYBOARD SHORTCUTS](#keyboard-shortcuts)
-7. [CUSTOMIZATION & BEST PRACTICES](#customization-and-best-practices)
-8. [TESTING & DEVELOPMENT](#testing-and-development)
+7. [CUSTOMIZATION & BEST PRACTICES](#customization--best-practices)
+8. [TESTING & DEVELOPMENT](#testing--development)
 9. [TROUBLESHOOTING](#troubleshooting)
 
 ---
@@ -37,11 +37,9 @@
 
    - B. Navigate into the directory:
 
-     ````bash
+     ```bash
      cd smart-form-picker
-       ```
-
-     ````
+     ```
 
    - C. Install dependencies using Bun:
      ```bash
@@ -61,9 +59,9 @@
 3. ### PROJECT STRUCTURE
 
    - smart-form-picker/
-     - config.json (user-defined, see 4a)
+     - config.json (user-defined, see [4a](#a-configjson-placed-at-root))
      - manifest.json
-       - data/ (user-defined, see §4)
+       - data/ (user-defined, see [4b](#b-data-directory-user-created-at-root))
      - dist/ (build output)
      - src/
        - main.js (entry point, handles keyboard shortcuts)
@@ -200,7 +198,7 @@
      Placeholders in square brackets must match keys in your JSON tab files.
      ```
 
-### 5. USAGE & FEATURES:
+5. ### USAGE & FEATURES
 
 - Form Pickers:
 
@@ -208,7 +206,7 @@
 
     - Opens modal displaying tabs from mapping.json.
     - Clicking a key/value pair fills the focused form input.
-    - Loads tabs from mapping.json. (see §4c & §4d)
+    - Loads tabs from mapping.json. (see [4c](#c-mappingjson-required-per-data-source) & [4d](#d-json-tab-formats))
 
       ![smart-form-picker](https://github.com/user-attachments/assets/dab99991-ee09-4b44-87c5-4ff7ba19055f)
 
@@ -218,7 +216,7 @@
 
     - Create, edit, preview, save, load, copy, modify, download templates and upload modified templates as pdf or plain text files to file input elements.
     - Supports plain text and PDF generation.
-    - Basically loads and modified defined template registered in mapping.json templates section(see §4c & §4e).
+    - Basically loads and modified defined template registered in mapping.json templates section(see [4c](#c-mappingjson-required-per-data-source) & [4e](#e-templates-txt-files)).
 
       In the example below we load a pre-defined cover letter template, modify the place holders, save the template for later use. Then copy the modified template onto the clipboard so we can paste it into the cover letter input.
 
@@ -228,17 +226,13 @@
 
       ![smart-template-picker-load-upload](https://github.com/user-attachments/assets/c2429d71-44a7-4193-a8cc-98527421b210)
 
-  ***
-
   - #### C. File Upload (Ctrl+U):
 
     - Allows PDF injection into file input elements from pre-defined files.
     - Ideal for quickly submitting documents.
-    - Basically loads and modified defined template registered in mapping.json files section(see §4c).
+    - Basically loads and modified defined template registered in mapping.json files section(see [4c](#c-mappingjson-required-per-data-source)).
 
       ![smart-file-uploader](https://github.com/user-attachments/assets/26a2fc7f-3af4-481a-9112-a364e86ccfb0)
-
-  ***
 
   - #### D. Configuration Switcher (Ctrl+K):
     - Easily switch between different data sources at runtime.
@@ -246,12 +240,12 @@
 
 6. ### KEYBOARD SHORTCUTS:
 
-- Ctrl+M: Opens Form Picker modal on focused input/textarea.
-- Ctrl+T: Opens Template Picker modal.
-- Ctrl+U: Opens File Upload modal.
-- Ctrl+K: Opens Configuration Switcher modal.
+- `Ctrl+M`: Opens Form Picker modal on focused input/textarea.
+- `Ctrl+T`: Opens Template Picker modal.
+- `Ctrl+U`: Opens File Upload modal.
+- `Ctrl+K`: Opens Configuration Switcher modal.
 
-7. ### CUSTOMIZATION & BEST PRACTICES:
+7. ### CUSTOMIZATION & BEST PRACTICES
 
 - Clearly structure data directories for easy management.
 - Use consistent naming conventions for clarity.
@@ -278,3 +272,5 @@ Common Issues:
 
 - Tabs or templates not loading: Check mapping.json paths, file existence, and JSON validity.
 - PDF upload issues: Ensure page has file input fields; verify correct input selected in the dropdown.
+
+
