@@ -26,6 +26,7 @@
 1. ### INTRODUCTION
 
    Smart Form Picker is a Chrome extension designed to streamline form-filling tasks by dynamically populating form inputs using user-defined data. It supports various use cases including job applications, banking forms, education portals, and any repetitive form-entry scenario. All data, templates, and configurations are entirely customizable by users, providing maximum flexibility.
+![Kapture 2025-04-20 at 18 12 32](https://github.com/user-attachments/assets/d2fd12e7-544d-4d6e-aea7-a535306c87a9)
 
 2. ### INSTALLATION
 
