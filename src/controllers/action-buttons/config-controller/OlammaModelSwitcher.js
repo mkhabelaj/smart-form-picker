@@ -1,9 +1,6 @@
 import {
   getAvailabelOllamaModels,
   getCurrentOllamaModel,
-  getDataSource,
-  getDataSources,
-  setDataSource,
   setOllamaModel,
 } from "../../../api";
 import GenericElement from "../../../elements/GenericElement";

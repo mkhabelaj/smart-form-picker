@@ -156,7 +156,9 @@ export async function ollamaGenerate(prompt) {
 }
 export async function queryOllama(prompt) {
   const data = await ollamaGenerate(prompt);
-  return data.response;
+  // let remove <think></think> and everything inside from the response
+  const response = data.response.replace(/<think>(.*?)<\/think>/g, "");
+  return response;
 }
 
 export async function setOllamaModel(model) {

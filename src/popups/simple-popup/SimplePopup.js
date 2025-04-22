@@ -148,6 +148,8 @@ export default class SimplePopup {
         border: "1px solid #ccc",
         padding: "10px",
         marginBottom: "10px",
+        "max-height": "600px",
+        "overflow-y": "auto",
       },
     });
     return body.get();
