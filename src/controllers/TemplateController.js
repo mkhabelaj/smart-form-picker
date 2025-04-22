@@ -1,6 +1,12 @@
 import SimpleModal from "../modals/modals/simple-modal/SimpleModal.js";
 import GenericElement from "../elements/GenericElement.js";
-import { fetchData, fetchText, setStorage, getStorage } from "../api.js";
+import {
+  fetchData,
+  fetchText,
+  setStorage,
+  getStorage,
+  queryOllama,
+} from "../api.js";
 import SimpleElementBuilder from "../builders/SimpleElementBuilder.js";
 import SimplePopup from "../popups/simple-popup/SimplePopup.js";
 import { Toast } from "../toasts/Toast.js";
@@ -11,6 +17,7 @@ import {
   getInputLabelContent,
   injectBlobToFile,
 } from "../utils.js";
+import { marked } from "marked";
 
 class EmptyTextAreaError extends Error {}
 
@@ -56,6 +63,7 @@ export default class TemplateController {
     this.#createCopyButton();
     this.#createSaveAsButton();
     this.#createViewButton();
+    this.#createAIPopup();
     this.modal.renderContent(this.#container);
   }
 
@@ -650,5 +658,33 @@ export default class TemplateController {
       console.error("Error loading templates:", error);
       this.toast.error("Error loading templates.");
     }
+  }
+
+  #createAIPopup() {
+    const AIButton = this.elementbuilder.buttons.build.buildSecondaryButton(
+      "AI",
+      () => {
+        const { popup, container } =
+          this.#createContainerAndPopup("Generate with AI");
+        const genKeyWordsButton =
+          this.elementbuilder.buttons.build.buildPrimaryButton(
+            "Generate Keywords",
+            async () => {
+              const documentText = document.documentElement.innerText;
+
+              const p =
+                "Please extract up to 50 of the most important keywords from the job posting—focus on items like company name, position title, required technologies or stack, years of experience, certifications, and any other core skills or domain terms. Return your results as a html table.  Here is the posting text:  >";
+              const doc = `{{${documentText}}`;
+              const data = await queryOllama(p + doc);
+              container.setHTML(marked(data));
+            },
+            this.elementbuilder.buttons.buttonSize.small,
+          );
+        popup.setBody(container.get());
+        popup.setFooter(genKeyWordsButton);
+      },
+    );
+
+    this.modal.appendFooter(AIButton);
   }
 }

@@ -108,3 +108,58 @@ export async function setStorage(item) {
     });
   });
 }
+
+// export async function queryOllama(prompt) {
+//   const res = await fetch("http://localhost:11434/api/generate", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({
+//       model: "deepseek-r1", // or your model name
+//       prompt: prompt,
+//       stream: false, // optional: disable streaming
+//     }),
+//   });
+//   if (!res.ok) throw new Error(`Ollama error: ${res.status}`);
+//   const data = await res.json();
+//   console.log("Ollama response:", data);
+//   return data.response;
+// }
+
+/**
+ * Send a generate request to Ollama via your background script.
+ *
+ * @param {string} prompt
+ * @param {string} model - Optional. Defaults to "llama3.2".
+ * @param {string} messageType - Optional. Defaults to "OLLAMA_GENERATE".
+ *
+ * @returns {Promise<Object>}
+ *
+ */
+export async function ollamaGenerate(
+  prompt,
+  model = "llama3.2",
+  messageType = "OLLAMA_GENERATE",
+) {
+  const response = new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(
+      { type: messageType, model, prompt },
+      (response) => {
+        // runtime errors (e.g. no listener) surface here
+        if (chrome.runtime.lastError) {
+          return reject(chrome.runtime.lastError);
+        }
+        // our own API‐level errors
+        if (response.error) {
+          return reject(new Error(response.error));
+        }
+        resolve(response.data);
+      },
+    );
+  });
+
+  return response;
+}
+export async function queryOllama(prompt) {
+  const data = await ollamaGenerate(prompt);
+  return data.response;
+}
