@@ -65,6 +65,13 @@ describe("injectBlobToFile", () => {
     const file = files[0];
     expect(file.name).toBe("hello.txt");
     expect(file.type).toBe("text/plain");
+    expect(file.size).toBe(5);
+    //test content
+    const reader = new FileReader();
+    reader.onload = function () {
+      expect(reader.result).toBe("Hello");
+    };
+    reader.readAsText(file);
     expect(changed).toBe(true);
   });
 });
