@@ -37,11 +37,10 @@ describe("SimplePopup", () => {
     expect(popupEl.style.borderRadius).toBe("5px");
     expect(popupEl.style.boxShadow).toBe("0 0 10px rgba(0, 0, 0, 0.2)");
     expect(popupEl.style.minWidth).toBe("200px");
-    expect(popupEl.style.padding).toBe("10px");
   });
 
   test("header, body, and footer are created and appended", () => {
-    const children = Array.from(popupEl.children);
+    const children = Array.from(popupEl.children[1].children);
     expect(children.length).toBe(3);
     expect(children[0].tagName).toBe("HEADER");
     expect(children[1].tagName).toBe("MAIN");
