@@ -1,3 +1,4 @@
+import { marked } from "marked";
 import { fetchData, fetchText, queryOllama } from "../../../api";
 import SimplePopup from "../../../popups/simple-popup/SimplePopup";
 import TemplateControllerButton from "../TemplateControllerButton";

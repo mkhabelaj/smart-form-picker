@@ -1,6 +1,7 @@
 import GenericElement from "../../elements/GenericElement.js";
 import SimpleElementBuilder from "../../builders/SimpleElementBuilder.js";
 import { makeDraggable } from "../../utils.js";
+import TitleBar from "../../TitleBar.js";
 
 /**
  * Class SimplePopup
@@ -13,6 +14,8 @@ export default class SimplePopup {
   #body;
   #footer;
   #styles = {};
+  #popupContainer;
+  #titleBar;
 
   constructor(title = "Popup", { styles = {} } = {}) {
     this.elementBuilder = SimpleElementBuilder;
@@ -24,29 +27,47 @@ export default class SimplePopup {
       this.#setDefaultStyles();
     }
 
+    this.#popupContainer = this.#createPopupContainer();
+    this.#titleBar = new TitleBar({
+      title,
+      onMinimize: () => {
+        this.#popupContainer.style.display = "none";
+      },
+      onMaximize: () => {
+        this.#popupContainer.style.display = "block";
+      },
+      onClose: () => {
+        this.#popup.remove();
+      },
+    });
+    this.#popup.append(this.#titleBar.get());
     this.#header = this.#createHeader();
     this.#body = this.#createBody();
     this.#footer = this.#createFooter();
 
-    this.#popup.append(this.#header);
-    this.#popup.append(this.#body);
-    this.#popup.append(this.#footer);
+    this.#popup.append(this.#popupContainer);
+
+    this.#popupContainer.append(this.#header);
+    this.#popupContainer.append(this.#body);
+    this.#popupContainer.append(this.#footer);
 
     this.setTitle(title);
     this.makeDraggable();
     this.#addCloseButton();
   }
 
-  makeDraggable() {
-    const dragHandle = new GenericElement("span", {
-      content: "⠿",
+  #createPopupContainer() {
+    const container = new GenericElement("div", {
       styles: {
-        cursor: "move",
-        "font-size": "30px",
+        padding: "10px",
       },
     });
-    this.#header.append(dragHandle.get());
-    makeDraggable(this.#popup, dragHandle.get());
+    return container.get();
+  }
+
+  makeDraggable() {
+    this.#titleBar.setStyle("cursor", "move");
+    makeDraggable(this.#popup, this.#titleBar.get());
   }
 
   /**
@@ -81,7 +102,7 @@ export default class SimplePopup {
       "border-radius": "5px",
       "box-shadow": "0 0 10px rgba(0, 0, 0, 0.2)",
       "min-width": "200px",
-      padding: "10px",
+      // padding: "10px",
     };
     this.setStyles(this.#styles);
   }
