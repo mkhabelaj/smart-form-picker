@@ -110,6 +110,11 @@ export async function setStorage(item) {
   });
 }
 
+export async function getCurrentOllamaModel() {
+  const result = await getStorage(OLLAMA_MODEL);
+  return result[OLLAMA_MODEL] || null;
+}
+
 /**
  * Send a generate request to Ollama via your background script.
  * model defaults to config.ai.ollama.model
@@ -122,9 +127,7 @@ export async function setStorage(item) {
 export async function ollamaGenerate(prompt) {
   // check if the model is in storage
 
-  const result = await getStorage(OLLAMA_MODEL);
-
-  let model = result[OLLAMA_MODEL] || null;
+  let model = await getCurrentOllamaModel();
 
   if (model == null) {
     const config = await getConfig();
@@ -156,6 +159,14 @@ export async function queryOllama(prompt) {
   return data.response;
 }
 
+export async function setOllamaModel(model) {
+  await setStorage({ [OLLAMA_MODEL]: model });
+}
+/**
+ * Fetches data from the extension's assets.
+ * @param {string} item - The name of the file to load.
+ * @returns {Promise<Object>} The parsed data.
+ */
 export async function getAvailabelOllamaModels() {
   const response = new Promise((resolve, reject) => {
     chrome.runtime.sendMessage({ type: "OLLAMA_MODELS" }, (response) => {
@@ -171,5 +182,6 @@ export async function getAvailabelOllamaModels() {
     });
   });
 
-  return response;
+  const data = await response;
+  return data["models"].map((model) => model.name);
 }

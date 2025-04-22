@@ -10,9 +10,8 @@ export default class TemplateControllerButton extends ControllerButton {
    * @param {SimpleModal} modal
    */
   constructor(textArea, modal) {
-    super();
+    super(modal);
     this.textArea = textArea;
-    this.modal = modal;
   }
 
   checkIfTextAreaIsEmpty() {

@@ -20,7 +20,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
   //get a list of available models
   if (msg.type === "OLLAMA_MODELS") {
-    fetch("http://localhost:11434/api/models", {
+    fetch("http://localhost:11434/api/tags", {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     })

@@ -1,10 +1,15 @@
 import SimpleModalElementBuilder from "../../builders/SimpleElementBuilder";
 import GenericElement from "../../elements/GenericElement";
+import SimpleModal from "../../modals/modals/simple-modal/SimpleModal";
 import SimplePopup from "../../popups/simple-popup/SimplePopup";
 import { Toast } from "../../toasts/Toast";
 
 export default class ControllerButton {
-  constructor() {
+  /**
+   * @param {SimpleModal} modal
+   */
+  constructor(modal) {
+    this.modal = modal;
     this.toast = new Toast();
     this.elementbuilder = SimpleModalElementBuilder;
   }
