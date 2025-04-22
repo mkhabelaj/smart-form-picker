@@ -1,4 +1,5 @@
 const DATA_SOURCE_KEY = "smart-form-picker-data-source";
+const OLLAMA_MODEL = "smart-form-picker-ollama";
 
 /**
  * Fetches extension configuration from root
@@ -109,40 +110,31 @@ export async function setStorage(item) {
   });
 }
 
-// export async function queryOllama(prompt) {
-//   const res = await fetch("http://localhost:11434/api/generate", {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({
-//       model: "deepseek-r1", // or your model name
-//       prompt: prompt,
-//       stream: false, // optional: disable streaming
-//     }),
-//   });
-//   if (!res.ok) throw new Error(`Ollama error: ${res.status}`);
-//   const data = await res.json();
-//   console.log("Ollama response:", data);
-//   return data.response;
-// }
-
 /**
  * Send a generate request to Ollama via your background script.
+ * model defaults to config.ai.ollama.model
  *
  * @param {string} prompt
- * @param {string} model - Optional. Defaults to "llama3.2".
- * @param {string} messageType - Optional. Defaults to "OLLAMA_GENERATE".
  *
  * @returns {Promise<Object>}
  *
  */
-export async function ollamaGenerate(
-  prompt,
-  model = "llama3.2",
-  messageType = "OLLAMA_GENERATE",
-) {
+export async function ollamaGenerate(prompt) {
+  // check if the model is in storage
+
+  const result = await getStorage(OLLAMA_MODEL);
+
+  let model = result[OLLAMA_MODEL] || null;
+
+  if (model == null) {
+    const config = await getConfig();
+    await setStorage({ [OLLAMA_MODEL]: config.ai.ollama.model });
+    model = config.ai.ollama.model;
+  }
+
   const response = new Promise((resolve, reject) => {
     chrome.runtime.sendMessage(
-      { type: messageType, model, prompt },
+      { type: "OLLAMA_GENERATE", model, prompt },
       (response) => {
         // runtime errors (e.g. no listener) surface here
         if (chrome.runtime.lastError) {
@@ -162,4 +154,22 @@ export async function ollamaGenerate(
 export async function queryOllama(prompt) {
   const data = await ollamaGenerate(prompt);
   return data.response;
+}
+
+export async function getAvailabelOllamaModels() {
+  const response = new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({ type: "OLLAMA_MODELS" }, (response) => {
+      // runtime errors (e.g. no listener) surface here
+      if (chrome.runtime.lastError) {
+        return reject(chrome.runtime.lastError);
+      }
+      // our own API‐level errors
+      if (response.error) {
+        return reject(new Error(response.error));
+      }
+      resolve(response.data);
+    });
+  });
+
+  return response;
 }
