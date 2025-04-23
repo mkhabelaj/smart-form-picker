@@ -72,18 +72,39 @@ export default class FormPickerController {
 
         const listItem = new GenericElement("li", {
           styles: {
-            padding: "8px",
             "border-bottom": "1px solid #ddd",
-            cursor: "pointer",
-          },
-          events: {
-            click: () => {
-              self.target.value = dataObj[key];
-              self.modal.close();
-              self.toast.success(`${key} successfully populated.`);
-            },
+            display: "flex",
+            gap: "10px",
           },
           children: [
+            new GenericElement("span", {
+              content: "📋",
+              styles: {
+                "font-size": "18px",
+                cursor: "pointer",
+              },
+              events: {
+                click: () => {
+                  self.target.value = dataObj[key];
+                  self.modal.close();
+                  self.toast.success(`${key} successfully populated.`);
+                },
+              },
+            }),
+            new GenericElement("span", {
+              content: "📄",
+              styles: {
+                "font-size": "18px",
+                cursor: "pointer",
+              },
+              events: {
+                click: () => {
+                  navigator.clipboard.writeText(dataObj[key]);
+                  self.modal.close();
+                  self.toast.success(`${key} successfully copied.`);
+                },
+              },
+            }),
             new GenericElement("span", {
               content: `${key} : `,
               styles: { "font-weight": "bold", "font-size": "16px" },
