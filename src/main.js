@@ -1,34 +1,39 @@
-import FormPickerController from "./controllers/FormPickerController";
+import FormPickerController from "./controllers/form-picker/FormPickerController";
 import FileUploadController from "./controllers/FileUploadController";
 import TemplateController from "./controllers/TemplateController";
 import ConfigController from "./controllers/ConfigController";
+import FormPickerTargetPasteAction from "./controllers/form-picker/list-actions/FormPickerTargetPasteAction";
+import FormPickerCopyAction from "./controllers/form-picker/list-actions/FormPickerCopyAction";
 
 document.addEventListener("keydown", (event) => {
   // Ctrl+U triggers upload open.
   if (event.ctrlKey && event.key === "u") {
     event.preventDefault();
     new FileUploadController();
+    return;
   }
-});
-
-document.addEventListener("keydown", (event) => {
-  // Ctrl+T triggers template Controller
-  if (event.ctrlKey && event.key === "t") {
-    event.preventDefault();
-    new TemplateController();
-  }
-});
-//configuration
-document.addEventListener("keydown", (event) => {
   // Ctrl+K triggers configuration
   if (event.ctrlKey && event.key === "k") {
     event.preventDefault();
     new ConfigController();
+    return;
+  }
+  // Ctrl+T triggers template Controller
+  if (event.ctrlKey && event.key === "t") {
+    event.preventDefault();
+    new TemplateController();
+    return;
+  }
+  //Ctrl+Shift+M Form Picker Copy Modal
+  if (event.ctrlKey && event.shiftKey && event.key === "M") {
+    event.preventDefault();
+    new FormPickerController([new FormPickerCopyAction()]);
+    return;
   }
 });
 
 // Event listener to trigger the modal via a keyboard shortcut (Ctrl+M)
-// when an INPUT or TEXTAREA element is focused.
+// when an INPUT or TEXTAREA element is focused. OR Ctrl+Shift+M to open the modal outside of a form
 document.addEventListener("focusin", (event) => {
   const target = event.target;
   if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
@@ -36,7 +41,10 @@ document.addEventListener("focusin", (event) => {
       // Ctrl+M triggers the modal to open.
       if (e.ctrlKey && e.key === "m") {
         e.preventDefault();
-        new FormPickerController(target);
+        new FormPickerController([
+          new FormPickerTargetPasteAction(target),
+          new FormPickerCopyAction(),
+        ]);
         target.removeEventListener("keydown", handler);
       }
     });

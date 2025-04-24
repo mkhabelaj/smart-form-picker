@@ -2,6 +2,7 @@ import SimpleModal from "../../modals/modals/simple-modal/SimpleModal.js";
 import GenericElement from "../../elements/GenericElement.js";
 import { fetchData } from "../../api.js";
 import { Toast } from "../../toasts/Toast.js";
+import FormPickerAction from "./list-actions/FormPickerAction.js";
 /**
  * Class FillHelper
  * Orchestrates the modal population and event handling.
@@ -10,11 +11,11 @@ import { Toast } from "../../toasts/Toast.js";
 export default class FormPickerController {
   /**
    * Constructs a FillHelper with the target field and creates the modal.
-   * @param {HTMLElement} target - The form field to be populated.
+   * @param {FormPickerAction[]} actions - An array of FormPickerAction objects.
    */
-  constructor(target) {
+  constructor(actions) {
     this.toast = new Toast();
-    this.target = target;
+    this.actions = actions;
     this.modal = new SimpleModal("Smart Form Picker");
     this.#loaderHeaderTabs();
     this.#loadInitialContent();
@@ -77,34 +78,9 @@ export default class FormPickerController {
             gap: "10px",
           },
           children: [
-            new GenericElement("span", {
-              content: "📋",
-              styles: {
-                "font-size": "18px",
-                cursor: "pointer",
-              },
-              events: {
-                click: () => {
-                  self.target.value = dataObj[key];
-                  self.modal.close();
-                  self.toast.success(`${key} successfully populated.`);
-                },
-              },
-            }),
-            new GenericElement("span", {
-              content: "📄",
-              styles: {
-                "font-size": "18px",
-                cursor: "pointer",
-              },
-              events: {
-                click: () => {
-                  navigator.clipboard.writeText(dataObj[key]);
-                  self.modal.close();
-                  self.toast.success(`${key} successfully copied.`);
-                },
-              },
-            }),
+            ...this.actions.map((action) =>
+              action.getAction(key, dataObj, self.modal),
+            ),
             new GenericElement("span", {
               content: `${key} : `,
               styles: { "font-weight": "bold", "font-size": "16px" },
