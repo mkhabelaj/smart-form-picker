@@ -16,6 +16,7 @@ export default class SimplePopup {
   #styles = {};
   #popupContainer;
   #titleBar;
+  #closeBtn;
 
   constructor(title = "Popup", { styles = {} } = {}) {
     this.elementBuilder = SimpleElementBuilder;
@@ -120,6 +121,7 @@ export default class SimplePopup {
       },
       this.elementBuilder.buttons.buttonSize.small,
     );
+    this.#closeBtn = close;
     this.#footer.append(close);
   }
 
@@ -212,6 +214,14 @@ export default class SimplePopup {
    */
   setBody(body) {
     this.#body.append(body);
+  }
+
+  /**
+   * Remove close button
+   * @returns {void}
+   */
+  removeCloseButton() {
+    this.#closeBtn.remove();
   }
 
   /**

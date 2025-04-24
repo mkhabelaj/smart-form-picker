@@ -2,6 +2,7 @@ import { marked } from "marked";
 import { fetchData, fetchText, queryOllama } from "../../../api";
 import SimplePopup from "../../../popups/simple-popup/SimplePopup";
 import TemplateControllerButton from "../TemplateControllerButton";
+import GenericElement from "../../../elements/GenericElement";
 export default class GenerateAIButton extends TemplateControllerButton {
   /**
    * @param {HTMLTextAreaElement} textArea
@@ -58,6 +59,18 @@ export default class GenerateAIButton extends TemplateControllerButton {
     this.#buildButtonsFromPrompts(templatePrompts);
   }
 
+  #createButtonContainer() {
+    const container = new GenericElement("div", {
+      styles: {
+        display: "grid",
+        gridTemplateColumns: "repeat(4, 1fr)",
+        gap: "3px",
+      },
+    });
+
+    return container;
+  }
+
   /**
    * Function to build the buttons from the template prompts
    * @param {Array<Object>} templatePrompts - The array of template prompts
@@ -71,7 +84,11 @@ export default class GenerateAIButton extends TemplateControllerButton {
         try {
           const { popup, container } =
             this.createContainerAndPopup("Generate with AI");
+          popup.removeCloseButton();
+          const buttonContainer = this.#createButtonContainer();
+
           popup.setBody(container.get());
+          popup.setFooter(buttonContainer.get());
 
           for (const prompt of templatePrompts) {
             const button = this.#createPrimaryButton(prompt.name, async () => {
@@ -110,7 +127,7 @@ export default class GenerateAIButton extends TemplateControllerButton {
                 this.toast.error("Error filling template.");
               }
             });
-            popup.setFooter(button);
+            buttonContainer.appendChild(button);
           }
         } catch (err) {
           console.error(err);
