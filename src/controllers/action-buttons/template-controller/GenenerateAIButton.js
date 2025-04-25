@@ -1,5 +1,10 @@
 import { marked } from "marked";
-import { fetchData, fetchText, queryOllama } from "../../../api";
+import {
+  fetchData,
+  fetchText,
+  getCurrentOllamaModel,
+  queryOllama,
+} from "../../../api";
 import TemplateControllerButton from "../TemplateControllerButton";
 import GenericElement from "../../../elements/GenericElement";
 import TemplateController from "../../TemplateController";
@@ -86,12 +91,40 @@ export default class GenerateAIButton extends TemplateControllerButton {
   async #buildButtonsFromPrompts(templatePrompts) {
     const aiBtn = this.elementbuilder.ButtonBuilder.getButton(
       "AI",
-      () => {
+      async () => {
         try {
+          const selectedModel = await getCurrentOllamaModel();
+          const whichContext = this.templateController.isDocumentContextSet()
+            ? "User selected context"
+            : "Configuration context: defined as $document in the template-prompts mapping.json";
           const { popup, container } =
             this.createContainerAndPopup("Generate with AI");
 
-          container.setContent("Select and action to begin AI generation");
+          const div = new GenericElement("div", {
+            styles: {
+              display: "flex",
+              flexDirection: "column",
+              gap: "2px",
+            },
+            children: [
+              new GenericElement("h4", {
+                content: "Select and action to begin AI generation",
+              }),
+              new GenericElement("p", {
+                styles: {
+                  "font-weight": "bold",
+                },
+                content: `Select model: {${selectedModel}}`,
+              }),
+              new GenericElement("p", {
+                styles: {
+                  "font-weight": "bold",
+                },
+                content: `${whichContext}`,
+              }),
+            ],
+          });
+          container.appendChild(div);
           popup.removeCloseButton();
           const buttonContainer = this.#createButtonContainer();
 
