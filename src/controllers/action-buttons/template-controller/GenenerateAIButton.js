@@ -2,20 +2,16 @@ import { marked } from "marked";
 import { fetchData, fetchText, queryOllama } from "../../../api";
 import TemplateControllerButton from "../TemplateControllerButton";
 import GenericElement from "../../../elements/GenericElement";
+import TemplateController from "../../TemplateController";
 export default class GenerateAIButton extends TemplateControllerButton {
   /**
    * @param {HTMLTextAreaElement} textArea
    * @param {SimpleModal} modal
+   * @param {TemplateController} templateController
    */
-  constructor(textArea, modal) {
-    super(textArea, modal);
+  constructor(textArea, modal, templateController) {
+    super(textArea, modal, templateController);
     this.#initTemplatePrompts();
-  }
-
-  #createPrimaryButton(label, onClick) {
-    return this.elementbuilder.ButtonBuilder.getButton(label, onClick, {
-      size: "small",
-    });
   }
 
   scrapePageText() {
@@ -70,6 +66,18 @@ export default class GenerateAIButton extends TemplateControllerButton {
   }
 
   /**
+   *
+   * Function to get the document context
+   * @returns {string} - The document context
+   **/
+  getDocumentContext() {
+    if (this.templateController.isDocumentContextSet()) {
+      return this.templateController.getDocumentContext().innerText;
+    }
+    return this.scrapePageText();
+  }
+
+  /**
    * Function to build the buttons from the template prompts
    * @param {Array<Object>} templatePrompts - The array of template prompts
    * @returns {Promise<void>}
@@ -110,7 +118,7 @@ export default class GenerateAIButton extends TemplateControllerButton {
                   );
                   joinPrompt = joinPrompt.replace(
                     "$document",
-                    this.scrapePageText(),
+                    this.getDocumentContext(),
                   );
 
                   if (joinPrompt.includes("$files")) {

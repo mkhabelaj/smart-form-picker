@@ -250,4 +250,20 @@ export default class SimpleModal {
   append(item) {
     this.getModal().append(item);
   }
+
+  /**
+   * Hides the modal and overlay.
+   */
+  hide() {
+    this.getModal().style.visibility = "hidden";
+    this.#overlay.overlay.style.visibility = "hidden";
+  }
+
+  /**
+   * Shows the modal and overlay.
+   */
+  show() {
+    this.getModal().style.visibility = "visible";
+    this.#overlay.overlay.style.visibility = "visible";
+  }
 }

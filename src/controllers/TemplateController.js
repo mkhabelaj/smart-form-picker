@@ -12,6 +12,7 @@ import {
   injectBlobToFile,
 } from "../utils.js";
 import GenenerateAIButton from "./action-buttons/template-controller/GenenerateAIButton.js";
+import DocumentContextButton from "./action-buttons/template-controller/DocumentContextButton.js";
 
 class EmptyTextAreaError extends Error {}
 
@@ -32,11 +33,19 @@ function toastEmptyTextAreaError(error) {
     toast.error(error.message);
   }
 }
+/**
+ *
+ * Controller for the template picker.
+ *
+ * @type {TemplateController}
+ */
 export default class TemplateController {
   #textArea;
   #container;
   #savedNamesListKey = "savedNamesList";
   #templateSelectLoader;
+  /** @type {HTMLElement | null} */
+  #documentContext = null;
 
   constructor() {
     this.toast = new Toast();
@@ -58,6 +67,7 @@ export default class TemplateController {
     this.#createSaveAsButton();
     this.#createViewButton();
     this.#createAIPopup();
+    this.#createDocumentContext();
     this.modal.renderContent(this.#container);
   }
 
@@ -655,6 +665,32 @@ export default class TemplateController {
   }
 
   #createAIPopup() {
-    new GenenerateAIButton(this.#textArea, this.modal);
+    new GenenerateAIButton(this.#textArea, this.modal, this);
+  }
+
+  #createDocumentContext() {
+    new DocumentContextButton(this.#textArea, this.modal, this);
+  }
+  /**
+   *
+   * @param {HTMLElement} element
+   * */
+  setDocumentContext(element) {
+    this.#documentContext = element;
+  }
+
+  /**
+   * gets the document context
+   * @param {HTMLElement} element
+   * */
+  getDocumentContext() {
+    return this.#documentContext;
+  }
+  /**
+   * Is the document context set?
+   * @returns {boolean}
+   * */
+  isDocumentContextSet() {
+    return this.#documentContext !== null;
   }
 }
