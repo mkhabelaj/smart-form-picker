@@ -24,7 +24,8 @@ export default class GenerateAIButton extends TemplateControllerButton {
 
   async #getTemplatePrompts() {
     const templates = await fetchData("mapping.json");
-    return templates["template-prompts"];
+    const templatePrompts = await fetchData(templates["template-prompts"]);
+    return templatePrompts;
   }
   /**
    * Function to get the file placeholders map
