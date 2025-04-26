@@ -18,7 +18,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["data/*", "config.json"],
+      "resources": ["data/*", "config.json", "styles/*"],
       "matches": ["<all_urls>"]
     }
   ]

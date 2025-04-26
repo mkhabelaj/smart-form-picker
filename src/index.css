@@ -1,0 +1,7 @@
+/* 1) Bring in Tailwind’s engine */
+@import "tailwindcss";
+
+/* 2) Core layers */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

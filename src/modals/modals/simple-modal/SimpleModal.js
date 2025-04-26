@@ -19,15 +19,20 @@ export default class SimpleModal {
   #styles;
   #modalContainer;
   #confirmClose;
+  #stylesheet;
 
   /**
    * Constructor for the SimpleModal class.
    * @param {string} title - The title of the modal.
    * @param {Object} [param1={}] - An object containing optional parameters.
    * @param {{}} [param1.styles={}] - An object containing css properties and values.
+   * @param {HTMLElement|GenericElement} [param1.stylesheet=null] - The path to the external CSS file.
    * @param {*} [param1.confirmClose=False] - A boolean value indicating whether to confirm closing the modal.
    */
-  constructor(title = "Modal", { styles = {}, confirmClose = false } = {}) {
+  constructor(
+    title = "Modal",
+    { styles = {}, confirmClose = false, stylesheet = null } = {},
+  ) {
     // Create overlay and modal sections.
     this.#confirmClose = confirmClose;
     this.elementBuilder = SimpleModalElementBuilder;
@@ -35,12 +40,25 @@ export default class SimpleModal {
     this.#header = new ModalHeader();
     this.#content = new ModalContent();
     this.#footer = new ModalFooter();
+
+    if (stylesheet && stylesheet instanceof GenericElement) {
+      this.#stylesheet = stylesheet.get();
+    } else {
+      this.#stylesheet = stylesheet;
+    }
+
     // Create the modal host element with Shadow DOM.
     this.#modal = this.#create();
 
     // Get the modal container inside the Shadow DOM.
     const shadow = this.#modal.shadowRoot;
     this.#modalContainer = shadow.getElementById("data-modal");
+    this.#modalContainer.classList.add(
+      "bg-red-100",
+      "rounded-lg",
+      "shadow-lg",
+      "text-gray-800",
+    );
 
     // if styles are provided, set them.
     if (Object.keys(styles).length > 0) {
@@ -164,6 +182,10 @@ export default class SimpleModal {
 
     // 2) Attach a shadow root on the host
     const shadow = modalHost.attachShadow({ mode: "open" });
+
+    if (this.#stylesheet) {
+      shadow.appendChild(this.#stylesheet);
+    }
 
     // 3) Create the modal container via GenericElement
     const containerWrapper = new GenericElement("div", {

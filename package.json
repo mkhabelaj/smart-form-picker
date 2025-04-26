@@ -3,7 +3,11 @@
   "private": true,
   "devDependencies": {
     "@happy-dom/global-registrator": "^17.4.4",
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "postcss-cli": "^11.0.1",
+    "tailwindcss": "^4.1.4"
   },
   "peerDependencies": {
     "typescript": "^5"
@@ -12,7 +16,9 @@
     "build:content": "bun build src/main.js --outfile=dist/content.bundle.js",
     "build:watch": "bun run build:content --watch",
     "test": "bun test --dom",
-    "test:watch": "bun run test --watch"
+    "test:watch": "bun run test --watch",
+    "build:css": "postcss src/index.css -o styles/style.css --minify",
+    "watch:css": "postcss src/index.css -o styles/style.css --watch"
   },
   "dependencies": {
     "jspdf": "^3.0.1",

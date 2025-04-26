@@ -56,21 +56,34 @@ export default class TemplateController {
     this.#textArea = this.#createTexArea();
     this.#container.append(this.#textArea);
 
-    this.modal = new SimpleModal("Template Picker", { confirmClose: true });
-    this.modal.mergeStyles({ "min-width": "700px", "max-width": "900px" });
-    this.#createTemplateAreaClearButton();
-    this.#createClearPopupButton();
-    this.#createLoadFromButton();
-    this.#createDownloadButton();
-    this.#createUploadPdfButton();
-    this.#createCopyButton();
-    this.#createSaveAsButton();
-    this.#createViewButton();
-    this.#createAIPopup();
-    this.#createDocumentContext();
-    this.modal.renderContent(this.#container);
+    this.#createStyleSheet().then((styleSheet) => {
+      this.modal = new SimpleModal("Template Picker", {
+        confirmClose: true,
+        stylesheet: styleSheet,
+      });
+      this.modal.mergeStyles({ "min-width": "700px", "max-width": "900px" });
+      this.#createTemplateAreaClearButton();
+      this.#createClearPopupButton();
+      this.#createLoadFromButton();
+      this.#createDownloadButton();
+      this.#createUploadPdfButton();
+      this.#createCopyButton();
+      this.#createSaveAsButton();
+      this.#createViewButton();
+      this.#createAIPopup();
+      this.#createDocumentContext();
+      this.modal.renderContent(this.#container);
+    });
   }
 
+  async #createStyleSheet() {
+    const url = chrome.runtime.getURL("styles/style.css");
+    const response = await fetch(url);
+    const styleSheet = await response.text();
+    return new GenericElement("style", {
+      content: styleSheet,
+    });
+  }
   /**
    * Creates a container element and a popup element.
    * @param {string} popupName
