@@ -57,7 +57,7 @@ export default class TemplateController {
     this.#container.append(this.#textArea);
 
     this.modal = new SimpleModal("Template Picker", { confirmClose: true });
-    this.modal.mergeStyles({ "min-width": "700px", "max-width": "800px" });
+    this.modal.mergeStyles({ "min-width": "700px", "max-width": "900px" });
     this.#createTemplateAreaClearButton();
     this.#createClearPopupButton();
     this.#createLoadFromButton();
