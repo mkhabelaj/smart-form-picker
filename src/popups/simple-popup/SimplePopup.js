@@ -182,14 +182,28 @@ export default class SimplePopup {
    * @returns {HTMLElement}
    */
   #createPopup() {
-    const host = document.createElement("div");
-    host.id = "popup-host";
+    // 1) Create the host container via GenericElement
+    const hostWrapper = new GenericElement("div", {
+      attributes: { id: "popup-host" },
+    });
+    const host = hostWrapper.get();
+
+    // 2) Open a shadow root on the host
     const shadowRoot = host.attachShadow({ mode: "open" });
-    const shadowContent = document.createElement("div");
-    shadowContent.id = "shadow-content";
-    shadowContent.classList.add("pop-up");
+
+    // 3) Create the inner content via GenericElement
+    const shadowContentWrapper = new GenericElement("div", {
+      attributes: {
+        id: "shadow-content",
+        class: "pop-up",
+      },
+    });
+    const shadowContent = shadowContentWrapper.get();
+
+    // 4) Append it into the shadow and then add host to the document
     shadowRoot.appendChild(shadowContent);
     document.body.appendChild(host);
+
     return shadowContent;
   }
 

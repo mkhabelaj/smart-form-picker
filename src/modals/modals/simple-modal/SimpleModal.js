@@ -156,18 +156,23 @@ export default class SimpleModal {
    * @returns {HTMLElement} The modal host element with an attached shadow root.
    */
   #create() {
-    const modalHost = document.createElement("div");
-    modalHost.id = "data-modal-host";
+    // 1) Create the host wrapper via GenericElement
+    const hostWrapper = new GenericElement("div", {
+      attributes: { id: "data-modal-host" },
+    });
+    const modalHost = hostWrapper.get();
 
-    // Attach a shadow root.
+    // 2) Attach a shadow root on the host
     const shadow = modalHost.attachShadow({ mode: "open" });
 
-    // Create the actual modal container.
-    const modalContainer = document.createElement("div");
-    modalContainer.id = "data-modal";
+    // 3) Create the modal container via GenericElement
+    const containerWrapper = new GenericElement("div", {
+      attributes: { id: "data-modal" },
+    });
+    const modalContainer = containerWrapper.get();
 
+    // 4) Append the container into shadow and return the host
     shadow.appendChild(modalContainer);
-
     return modalHost;
   }
 
