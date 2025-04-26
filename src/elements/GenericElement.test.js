@@ -1,6 +1,6 @@
-// GenericElement.test.js
 import { describe, test, expect, beforeEach } from "bun:test";
 import GenericElement from "./GenericElement.js";
+import { signal } from "../SimpleSignal.js";
 
 describe("GenericElement", () => {
   let element;
@@ -64,13 +64,9 @@ describe("GenericElement", () => {
       events: { click: clickHandler },
     });
 
-    // html should override plain text
     expect(optEl.get().innerHTML).toBe("<em>Ignore text</em>");
-    // style
     expect(optEl.get().style.padding).toBe("5px");
-    // attribute
     expect(optEl.get().getAttribute("type")).toBe("button");
-    // event listener
     optEl.get().click();
     expect(clicked).toBe(true);
   });
@@ -96,9 +92,7 @@ describe("GenericElement", () => {
       console.warn = () => {
         warned = true;
       };
-
       element.appendChild(123);
-
       console.warn = origWarn;
       expect(warned).toBe(true);
     });
@@ -123,9 +117,7 @@ describe("GenericElement", () => {
       console.warn = () => {
         warned = true;
       };
-
       element.appendTo(null);
-
       console.warn = origWarn;
       expect(warned).toBe(true);
     });
@@ -147,6 +139,40 @@ describe("GenericElement", () => {
         child1.get(),
         child2.get(),
       ]);
+    });
+  });
+
+  describe("reactive properties via signals", () => {
+    test("reactive content updates when signal changes", () => {
+      const contentSig = signal("initial");
+      const el = new GenericElement("div", { content: contentSig });
+      expect(el.get().textContent).toBe("initial");
+      contentSig.set("updated");
+      expect(el.get().textContent).toBe("updated");
+    });
+
+    test("reactive html updates when signal changes", () => {
+      const htmlSig = signal("<span>one</span>");
+      const el = new GenericElement("div", { html: htmlSig });
+      expect(el.get().innerHTML).toBe("<span>one</span>");
+      htmlSig.set("<span>two</span>");
+      expect(el.get().innerHTML).toBe("<span>two</span>");
+    });
+
+    test("reactive styles update when signal changes", () => {
+      const styleSig = signal({ color: "black" });
+      const el = new GenericElement("div", { styles: styleSig });
+      expect(el.get().style.color).toBe("black");
+      styleSig.set({ color: "orange" });
+      expect(el.get().style.color).toBe("orange");
+    });
+
+    test("reactive attributes update when signal changes", () => {
+      const attrSig = signal({ title: "Initial" });
+      const el = new GenericElement("div", { attributes: attrSig });
+      expect(el.get().getAttribute("title")).toBe("Initial");
+      attrSig.set({ title: "Updated" });
+      expect(el.get().getAttribute("title")).toBe("Updated");
     });
   });
 });

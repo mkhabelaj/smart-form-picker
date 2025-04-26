@@ -1,18 +1,18 @@
+import { isSignal, createEffect, signal } from "../SimpleSignal.js";
+
 export default class GenericElement {
   #element;
 
   /**
-   * Creates a new generic HTML element.
-   *
-   * @param {string} [tagName="div"] - The HTML tag to create (default is "div").
-   * @param {Object} [param1={}]  - Optional configuration settings.
-   * @param {string} [param1.content=""] - A string for plain text content.
-   * @param {string} [param1.html=""]  - A string for inner HTML (overrides plain text if provided).
-   * @param {{}} [param1.styles={}] - An object of inline CSS styles.
-   * @param {{}} [param1.events={}] - An object where keys are event names and values are event handlers.
-   * @param {{}} [param1.attributes={}] - An object where keys are attribute names and values are attribute values.
-   * @param {Array<GenericElement|HTMLElement>} [param1.children=[]] - An array of child to append.
-   *
+   * Creates a new generic HTML element, with optional reactive props.
+   * @param {string} [tagName="div"] - The HTML tag to create.
+   * @param {Object} [options={}] - Configuration or reactive signals.
+   * @param {string|signal} [options.content] - Plain text or signal for content.
+   * @param {string|signal} [options.html] - HTML string or signal for innerHTML.
+   * @param {object|signal} [options.styles] - Style object or signal for inline styles.
+   * @param {object} [options.events] - Event handlers map.
+   * @param {object|signal} [options.attributes] - Attribute map or signal.
+   * @param {Array<GenericElement|HTMLElement>} [options.children] - Initial children.
    */
   constructor(
     tagName = "div",
@@ -27,94 +27,100 @@ export default class GenericElement {
   ) {
     this.#element = document.createElement(tagName);
 
-    // Set content if provided. Prefer html over plain text if both exist.
-    if (html) {
+    // Reactive HTML takes precedence over content
+    if (isSignal(html)) {
+      createEffect(() => this.setHTML(html.get()));
+    } else if (html) {
       this.setHTML(html);
-    } else if (content) {
-      this.setContent(content);
+    } else {
+      // Only apply content if no html provided
+      if (isSignal(content)) {
+        createEffect(() => this.setContent(content.get()));
+      } else if (content) {
+        this.setContent(content);
+      }
     }
 
-    // Apply provided inline styles.
-    this.setStyles(styles);
+    // Reactive styles
+    if (isSignal(styles)) {
+      createEffect(() => this.setStyles(styles.get()));
+    } else {
+      this.setStyles(styles);
+    }
 
-    // Attach event listeners provided in the events object.
+    // Reactive attributes
+    if (isSignal(attributes)) {
+      createEffect(() => this.setAttributes(attributes.get()));
+    } else {
+      this.setAttributes(attributes);
+    }
+
+    // Attach static event listeners
     Object.entries(events).forEach(([event, handler]) => {
       this.addEventListener(event, handler);
     });
 
-    // Set attributes provided in the attributes object.
-    this.setAttributes(attributes);
+    // Append initial children
+    children.forEach((child) => this.appendChild(child));
+  }
 
-    // Append children if provided.
-    children.forEach((child) => {
-      this.appendChild(child);
+  /**
+   * Sets multiple HTML attributes.
+   * @param {object} attrs
+   */
+  setAttributes(attrs) {
+    Object.entries(attrs).forEach(([key, value]) => {
+      this.#element.setAttribute(key, value);
     });
   }
 
   /**
-   * html attributes to the element.
-   *
-   * @param {object} attributes - An object where keys are attribute names and values are attribute values.
-   */
-  setAttributes(attributes) {
-    for (const [key, value] of Object.entries(attributes)) {
-      this.#element.setAttribute(key, value);
-    }
-  }
-
-  /**
-   * Sets plain text content of the element.
-   *
-   * @param {string} text - The text content for the element.
+   * Sets plain text content.
+   * @param {string} text
    */
   setContent(text) {
     this.#element.textContent = text;
   }
 
   /**
-   * Sets the inner HTML of the element.
-   *
-   * @param {string} htmlContent - The HTML content to set.
+   * Sets inner HTML.
+   * @param {string} htmlString
    */
-  setHTML(htmlContent) {
-    this.#element.innerHTML = htmlContent;
+  setHTML(htmlString) {
+    this.#element.innerHTML = htmlString;
   }
 
   /**
    * Applies multiple inline styles.
-   *
-   * @param {object} stylesObj - An object where keys are CSS property names and values are CSS values.
+   * @param {object} stylesObj
    */
   setStyles(stylesObj) {
-    for (const [key, value] of Object.entries(stylesObj)) {
-      this.#element.style[key] = value;
-    }
+    Object.entries(stylesObj).forEach(([prop, val]) => {
+      this.#element.style[prop] = val;
+    });
   }
 
   /**
    * Sets a single inline style.
-   *
-   * @param {string} property - The CSS property name.
-   * @param {string} value - The CSS value.
+   * @param {string} property
+   * @param {string} value
    */
   setStyle(property, value) {
     this.#element.style[property] = value;
   }
 
   /**
-   * Attaches an event listener to the element.
-   *
-   * @param {string} event - The event type (e.g., "click").
-   * @param {Function} handler - The function to call when the event occurs.
+   * Attaches an event listener.
+   * @param {string} event
+   * @param {Function} handler
    */
   addEventListener(event, handler) {
     this.#element.addEventListener(event, handler);
   }
 
   /**
-   * Appends a child to the element.
-   *
-   * @param {(GenericElement|HTMLElement)} child - The child element. It can be either another GenericElement instance or an existing DOM HTMLElement.
+   * Appends a child element.
+   * @param {GenericElement|HTMLElement} child
    */
   appendChild(child) {
     if (child instanceof GenericElement) {
@@ -122,16 +128,13 @@ export default class GenericElement {
     } else if (child instanceof HTMLElement) {
       this.#element.appendChild(child);
     } else {
-      console.warn(
-        "Invalid child element provided. It must be an instance of GenericElement or HTMLElement.",
-      );
+      console.warn("Invalid child. Must be GenericElement or HTMLElement.");
     }
   }
 
   /**
-   * Appends the element to a parent element in the DOM.
-   *
-   * @param {(GenericElement|HTMLElement)} parent - The parent element.
+   * Appends this element to a parent.
+   * @param {GenericElement|HTMLElement} parent
    */
   appendTo(parent) {
     if (parent instanceof GenericElement) {
@@ -139,16 +142,13 @@ export default class GenericElement {
     } else if (parent instanceof HTMLElement) {
       parent.appendChild(this.#element);
     } else {
-      console.warn(
-        "Invalid parent element provided. It must be an instance of GenericElement or HTMLElement.",
-      );
+      console.warn("Invalid parent. Must be GenericElement or HTMLElement.");
     }
   }
 
   /**
    * Returns the underlying DOM element.
-   *
-   * @returns {HTMLElement} The wrapped HTML element.
+   * @returns {HTMLElement}
    */
   get() {
     return this.#element;

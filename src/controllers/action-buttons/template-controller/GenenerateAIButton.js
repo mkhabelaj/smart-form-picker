@@ -1,10 +1,5 @@
 import { marked } from "marked";
-import {
-  fetchData,
-  fetchText,
-  getCurrentOllamaModel,
-  queryOllama,
-} from "../../../api";
+import { fetchData, fetchText, ollamaModel, queryOllama } from "../../../api";
 import TemplateControllerButton from "../TemplateControllerButton";
 import GenericElement from "../../../elements/GenericElement";
 import TemplateController from "../../TemplateController";
@@ -93,7 +88,7 @@ export default class GenerateAIButton extends TemplateControllerButton {
       "AI",
       async () => {
         try {
-          const selectedModel = await getCurrentOllamaModel();
+          const selectedModel = ollamaModel;
           const whichContext = this.templateController.isDocumentContextSet()
             ? "User selected context"
             : "Configuration context: defined as $document in the template-prompts mapping.json";
@@ -110,11 +105,27 @@ export default class GenerateAIButton extends TemplateControllerButton {
               new GenericElement("h4", {
                 content: "Select and action to begin AI generation",
               }),
-              new GenericElement("p", {
+              new GenericElement("div", {
                 styles: {
-                  "font-weight": "bold",
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: "2px",
                 },
-                content: `Select model: {${selectedModel}}`,
+                children: [
+                  new GenericElement("p", {
+                    styles: {
+                      "font-weight": "bold",
+                    },
+                    content: `Select model: `,
+                  }),
+
+                  new GenericElement("p", {
+                    styles: {
+                      "font-weight": "bold",
+                    },
+                    content: selectedModel,
+                  }),
+                ],
               }),
               new GenericElement("p", {
                 styles: {

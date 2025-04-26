@@ -1,5 +1,9 @@
+import { signal } from "./SimpleSignal";
+
 const DATA_SOURCE_KEY = "smart-form-picker-data-source";
 const OLLAMA_MODEL = "smart-form-picker-ollama";
+
+export const ollamaModel = signal(null);
 
 /**
  * Fetches extension configuration from root
@@ -129,6 +133,8 @@ export async function ollamaGenerate(prompt) {
 
   let model = await getCurrentOllamaModel();
 
+  if (model) ollamaModel.set(model);
+
   if (model == null) {
     const config = await getConfig();
     await setStorage({ [OLLAMA_MODEL]: config.ai.ollama.model });
@@ -163,6 +169,7 @@ export async function queryOllama(prompt) {
 
 export async function setOllamaModel(model) {
   await setStorage({ [OLLAMA_MODEL]: model });
+  ollamaModel.set(model);
 }
 /**
  * Fetches data from the extension's assets.
