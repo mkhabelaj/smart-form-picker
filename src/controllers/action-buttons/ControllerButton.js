@@ -3,6 +3,7 @@ import GenericElement from "../../elements/GenericElement";
 import SimpleModal from "../../modals/modals/simple-modal/SimpleModal";
 import SimplePopup from "../../popups/simple-popup/SimplePopup";
 import { Toast } from "../../toasts/Toast";
+import { signal } from "../../SimpleSignal.js";
 
 export default class ControllerButton {
   /**
@@ -16,7 +17,7 @@ export default class ControllerButton {
 
   /**
    * Creates a container element and a popup element.
-   * @param {string} popupName
+   * @param {string | signal} popupName
    * @param {object} [styles=null] styles
    *        default styles:
    *        display: "flex"

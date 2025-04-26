@@ -1,9 +1,10 @@
 import GenericElement from "./elements/GenericElement";
+import { signal } from "./SimpleSignal.js";
 
 export default class TitleBar extends GenericElement {
   /**
    * @param {Object} options
-   * @param {string}   [options.title=""]         – Text to show in the bar
+   * @param {string | signal}   [options.title]    – Text to show in the bar
    * @param {Function} [options.onMinimize]       – Callback when “–” is clicked
    * @param {Function} [options.onMaximize]       – Callback when “▢” is clicked
    * @param {Function} [options.onClose]          – Callback when “×” is clicked

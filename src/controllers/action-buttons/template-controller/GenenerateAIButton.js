@@ -1,8 +1,15 @@
 import { marked } from "marked";
-import { fetchData, fetchText, ollamaModel, queryOllama } from "../../../api";
+import {
+  fetchData,
+  fetchText,
+  getCurrentOllamaModel,
+  ollamaModel,
+  queryOllama,
+} from "../../../api";
 import TemplateControllerButton from "../TemplateControllerButton";
 import GenericElement from "../../../elements/GenericElement";
 import TemplateController from "../../TemplateController";
+import { createEffect, signal } from "../../../SimpleSignal";
 export default class GenerateAIButton extends TemplateControllerButton {
   /**
    * @param {HTMLTextAreaElement} textArea
@@ -92,8 +99,8 @@ export default class GenerateAIButton extends TemplateControllerButton {
           const whichContext = this.templateController.isDocumentContextSet()
             ? "User selected context"
             : "Configuration context: defined as $document in the template-prompts mapping.json";
-          const { popup, container } =
-            this.createContainerAndPopup("Generate with AI");
+          const title = signal("Generate with AI");
+          const { popup, container } = this.createContainerAndPopup(title);
 
           const div = new GenericElement("div", {
             styles: {
@@ -135,6 +142,7 @@ export default class GenerateAIButton extends TemplateControllerButton {
               }),
             ],
           });
+          selectedModel.set(await getCurrentOllamaModel());
           container.appendChild(div);
           popup.removeCloseButton();
           const buttonContainer = this.#createButtonContainer();
@@ -148,6 +156,7 @@ export default class GenerateAIButton extends TemplateControllerButton {
               prompt.name,
               async () => {
                 try {
+                  title.set("Generate with AI" + " - " + prompt.name);
                   let joinPrompt = prompt.prompt.join(" ");
                   if (prompt.output === "$textarea") {
                     this.checkIfTextAreaIsEmpty();

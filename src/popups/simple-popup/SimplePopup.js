@@ -2,6 +2,7 @@ import GenericElement from "../../elements/GenericElement.js";
 import SimpleElementBuilder from "../../builders/SimpleElementBuilder.js";
 import { makeDraggable } from "../../utils.js";
 import TitleBar from "../../TitleBar.js";
+import { signal } from "../../SimpleSignal.js";
 
 /**
  * Class SimplePopup
@@ -18,6 +19,11 @@ export default class SimplePopup {
   #titleBar;
   #closeBtn;
 
+  /**
+   * @param {string | signal} title
+   * @param {Object} options
+   * @param {Object} options.styles
+   */
   constructor(title = "Popup", { styles = {} } = {}) {
     this.elementBuilder = SimpleElementBuilder;
     this.#popup = this.#createPopup();
@@ -197,7 +203,7 @@ export default class SimplePopup {
 
   /**
    * Sets the title of the popup
-   * @param {string} title
+   * @param {string | signal} title
    * @returns {void}
    */
   setTitle(title) {
