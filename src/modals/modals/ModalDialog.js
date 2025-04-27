@@ -138,21 +138,22 @@ export default class ModalDialog extends GenericElement {
     document.body.appendChild(this.get());
   }
   #makeTitleBar() {
-    // 1) create the title text
+    // NOTE: we’ve added "text-text" so currentColor = var(--color-text)
+    const btnClasses =
+      "w-6 h-6 flex items-center justify-center text-text hover:bg-accent rounded transition";
+
     const titleText = new GenericElement("div", {
-      attributes: { class: "text-lg font-semibold" },
+      attributes: { class: "text-lg font-semibold text-text" },
       content: "Modal Title",
     });
 
-    // 2) create each control button
-    const btnClasses =
-      "w-6 h-6 flex items-center justify-center hover:bg-accent rounded transition";
-
+    const overlay = this.#overlay;
     const btnMinimize = new GenericElement("button", {
       attributes: {
         class: btnClasses,
         "aria-label": "Minimize",
       },
+      events: { click: () => this.minimize() },
       children: [
         new GenericElement("span", {
           attributes: { class: "block w-3 h-[2px] bg-text" },
@@ -165,19 +166,23 @@ export default class ModalDialog extends GenericElement {
         class: btnClasses,
         "aria-label": "Maximize",
       },
+      events: { click: () => this.maximize() },
       children: [
         new GenericElement("span", {
-          attributes: { class: "block w-3 h-3 border-2 border-text" },
+          // border-2 gives you 2px solid, but let’s be explicit:
+          attributes: {
+            class: "block w-3 h-3 border-2 border-solid border-text",
+          },
         }),
       ],
     });
 
     const btnClose = new GenericElement("button", {
-      events: { click: () => this.close() },
       attributes: {
         class: btnClasses,
         "aria-label": "Close",
       },
+      events: { click: () => overlay.remove() },
       children: [
         new GenericElement("span", {
           attributes: { class: "block text-xl leading-none text-text" },
@@ -186,13 +191,11 @@ export default class ModalDialog extends GenericElement {
       ],
     });
 
-    // 3) wrap controls
     const controls = new GenericElement("div", {
       attributes: { class: "flex space-x-2" },
       children: [btnMinimize, btnMaximize, btnClose],
     });
 
-    // 4) assemble title bar
     const titleBar = new GenericElement("div", {
       attributes: {
         class:
@@ -201,10 +204,8 @@ export default class ModalDialog extends GenericElement {
       children: [titleText, controls],
     });
 
-    // 5) insert it into your modal (e.g. at the top)
     this.#modalContainer.get().prepend(titleBar.get());
   }
-
   /**
    * Closes the modal.
    * @returns {void}
@@ -238,5 +239,13 @@ export default class ModalDialog extends GenericElement {
    */
   renderContent(item) {
     this.appendContent(item);
+  }
+
+  minimize() {
+    this.#modal.get().style.display = "none";
+  }
+
+  maximize() {
+    this.#modal.get().style.display = "block";
   }
 }

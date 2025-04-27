@@ -8,33 +8,49 @@
 
 /* 1. Base “purplemajesty” theme + extra tokens for danger, warning, info */
 @theme {
-  /* Existing purple tokens */
-  --color-primary: #8e44ad;
-  --color-secondary: #9b59b6;
-  --color-accent: #af7ac5;
-  --color-deep-accent: #6c3483;
-  --color-complementary: #f1c40f;
-  --color-background: #f3e5f5;
-  --color-text: #4a235a;
+  /* Purple Majesty core */
+  --color-primary: #8e44ad; /* Majestic Purple */
+  --color-secondary: #9b59b6; /* Amethyst */
+  --color-accent: #af7ac5; /* Light Lilac */
+  --color-deep-accent: #6c3483; /* Deep Violet */
+  --color-complementary: #f1c40f; /* Vivid Yellow */
+  --color-background: #f3e5f5; /* Pale Lilac */
+  --color-text: #4a235a; /* Dark Purple */
 
-  /* New status tokens */
-  --color-danger: #e53e3e;
-  --color-warning: #dd6b20;
-  --color-info: #3182ce;
+  /* Status variants */
+  --color-success: #48bb78; /* Green (you can tweak) */
+  --color-danger: #e53e3e; /* Red */
+  --color-warning: #dd6b20; /* Orange */
+  --color-info: #3182ce; /* Blue */
 }
 
-/* 2) Build your button components */
+/* 4. Components: buttons */
 @layer components {
-  /* Base button style */
+  /* base “btn” wrapper */
   .btn {
-    @apply px-4 py-2 rounded font-semibold transition;
+    @apply rounded font-semibold transition;
   }
-  /* Variants—only applying real utilities! */
+
+  /* size variants */
+  .btn-sm {
+    @apply px-2 py-1 text-sm;
+  }
+  .btn-md {
+    @apply px-4 py-2 text-base;
+  }
+  .btn-lg {
+    @apply px-6 py-3 text-lg;
+  }
+
+  /* type variants */
   .btn-primary {
     @apply bg-primary   text-background hover:bg-deep-accent;
   }
   .btn-secondary {
     @apply bg-secondary text-background hover:bg-accent;
+  }
+  .btn-success {
+    @apply bg-success   text-background hover:opacity-90;
   }
   .btn-danger {
     @apply bg-danger    text-background hover:opacity-90;
