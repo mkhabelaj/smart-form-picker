@@ -1,7 +1,44 @@
 /* 1) Bring in Tailwind’s engine */
 @import "tailwindcss";
 
-/* 2) Core layers */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* 1. Base “purpleMajesty” theme + extra tokens for danger, warning, info */
+@theme {
+  /* Existing purple tokens */
+  --color-primary: #8e44ad;
+  --color-secondary: #9b59b6;
+  --color-accent: #af7ac5;
+  --color-deep-accent: #6c3483;
+  --color-complementary: #f1c40f;
+  --color-background: #f3e5f5;
+  --color-text: #4a235a;
+
+  /* New status tokens */
+  --color-danger: #e53e3e;
+  --color-warning: #dd6b20;
+  --color-info: #3182ce;
+}
+
+/* 2. Define your button components */
+@layer components {
+  /* Shared base styles */
+  .btn {
+    @apply px-4 py-2 rounded font-semibold transition;
+  }
+
+  /* Variations */
+  .btn-primary {
+    @apply btn bg-primary text-background hover:bg-deep-accent;
+  }
+  .btn-secondary {
+    @apply btn bg-secondary text-background hover:bg-accent;
+  }
+  .btn-danger {
+    @apply btn bg-danger text-background hover:opacity-90;
+  }
+  .btn-warning {
+    @apply btn bg-warning text-background hover:opacity-90;
+  }
+  .btn-info {
+    @apply btn bg-info text-background hover:opacity-90;
+  }
+}

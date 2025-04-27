@@ -27,18 +27,10 @@ export default class GenericElement {
   ) {
     this.#element = document.createElement(tagName);
 
-    // Reactive HTML takes precedence over content
-    if (isSignal(html)) {
-      createEffect(() => this.setHTML(html.get()));
-    } else if (html) {
+    if (html) {
       this.setHTML(html);
-    } else {
-      // Only apply content if no html provided
-      if (isSignal(content)) {
-        createEffect(() => this.setContent(content.get()));
-      } else if (content) {
-        this.setContent(content);
-      }
+    } else if (content) {
+      this.setContent(content);
     }
 
     // Reactive styles
@@ -76,17 +68,28 @@ export default class GenericElement {
 
   /**
    * Sets plain text content.
-   * @param {string} text
+   * @param {string | signal} text
    */
   setContent(text) {
+    if (isSignal(text)) {
+      createEffect(() => (this.#element.textContent = text.get()));
+      return;
+    }
     this.#element.textContent = text;
   }
 
   /**
    * Sets inner HTML.
-   * @param {string} htmlString
+   * @param {string | signal} htmlString
    */
   setHTML(htmlString) {
+    this.#element.innerHTML = htmlString;
+
+    if (isSignal(htmlString)) {
+      createEffect(() => (this.#element.innerHTML = htmlString.get()));
+      return;
+    }
+
     this.#element.innerHTML = htmlString;
   }
 
