@@ -1,5 +1,5 @@
 import GenericElement from "./GenericElement.js";
-export default class Select {
+export default class Select extends GenericElement {
   #select;
 
   /**
@@ -12,8 +12,19 @@ export default class Select {
    * @param {Function|null} onChange - Optional callback function for the change event.
    * @param {string|null} placeholder - Optional placeholder text to display as the first disabled option.
    * @param {object} styles - Optional object of inline styles (e.g., { border: "1px solid #ccc", padding: "5px" }).
+   * @param {object} attributes - Optional object of attributes (e.g., { name: "mySelect" }).
    */
-  constructor(options = [], onChange = null, placeholder = null, styles = {}) {
+  constructor(
+    options = [],
+    onChange = null,
+    placeholder = null,
+    styles = {},
+    attributes = {},
+  ) {
+    super("select", {
+      styles,
+      attributes,
+    });
     this.#select = new GenericElement("select");
 
     // If a placeholder is provided, add it as a disabled, selected option.
@@ -22,7 +33,7 @@ export default class Select {
         content: placeholder,
         attributes: { disabled: true, selected: true },
       });
-      this.#select.appendChild(placeholderOption);
+      this.appendChild(placeholderOption);
     }
 
     // Add provided options to the select.
@@ -34,9 +45,6 @@ export default class Select {
     if (onChange) {
       this.setOnChange(onChange);
     }
-
-    // Apply any provided inline styles.
-    this.setStyles(styles);
   }
 
   /**
@@ -44,24 +52,7 @@ export default class Select {
    * @param {string} name
    */
   setName(name) {
-    this.#select.setAttributes({ name: name });
-  }
-
-  /**
-   * Applies multiple inline styles to the select element.
-   * @param {object} styles - An object containing CSS property names and values.
-   */
-  setStyles(styles) {
-    this.#select.setStyles(styles);
-  }
-
-  /**
-   * Sets an individual inline style on the select element.
-   * @param {string} property - The CSS property name.
-   * @param {string} value - The value to assign.
-   */
-  setStyle(property, value) {
-    this.#select.setStyle(property, value);
+    this.setAttributes({ name: name });
   }
 
   /**
@@ -77,9 +68,13 @@ export default class Select {
    *
    * @param {(string|object)} option - A string or an object with option details.
    * @param {string} [value] - An optional value if a separate name parameter is used.
+   * @param {{}} options
+   * @param {string} options.styles - An object of inline styles to apply to the option element.
+   * @param {string} options.attributes - An object of attributes to apply to the option element.
+   * @returns {void}
    */
-  addOption(option, value) {
-    let opt = new GenericElement("option");
+  addOption(option, value, { styles = {}, attributes = {} } = {}) {
+    let opt = new GenericElement("option", { styles, attributes });
     // If two parameters are provided, treat the first as display text and the second as its value.
     if (value !== undefined) {
       opt.setContent(option);
@@ -94,7 +89,7 @@ export default class Select {
       opt.setAttributes({ value: option });
     }
 
-    this.#select.appendChild(opt);
+    this.appendChild(opt);
   }
 
   /**
@@ -102,10 +97,10 @@ export default class Select {
    * @param {string} value - The value of the option to remove.
    */
   removeOption(value) {
-    const options = this.#select.get().options;
+    const options = this.get().options;
     for (let i = 0; i < options.length; i++) {
       if (options[i].value === value) {
-        this.#select.get().remove(i);
+        this.get().remove(i);
         break;
       }
     }
@@ -115,7 +110,7 @@ export default class Select {
    * Clears all options from the select element.
    */
   clearOptions() {
-    this.#select.setHTML("");
+    this.setHTML("");
   }
 
   /**
@@ -123,7 +118,7 @@ export default class Select {
    * @param {Function} handler - The function to run when the select's value changes.
    */
   setOnChange(handler) {
-    this.#select.addEventListener("change", handler);
+    this.addEventListener("change", handler);
   }
 
   /**
@@ -131,7 +126,7 @@ export default class Select {
    * @returns {string} The value of the selected option.
    */
   getValue() {
-    return this.#select.get().value;
+    return this.get().value;
   }
 
   /**
@@ -139,14 +134,6 @@ export default class Select {
    * @param {string} value - The value to select.
    */
   setValue(value) {
-    this.#select.setAttributes({ value: value });
-  }
-
-  /**
-   * Returns the underlying DOM select element.
-   * @returns {HTMLElement} The select element.
-   */
-  get() {
-    return this.#select.get();
+    this.setAttributes({ value: value });
   }
 }

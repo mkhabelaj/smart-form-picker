@@ -1,9 +1,10 @@
 import { Button, buttonSize } from "../../elements/Button.js";
+import GenericElement from "../../elements/GenericElement.js";
 
 const ButtonBuilder = {
   /**
    * Creates a button with the specified name, size, and type.
-   *
+   * @deprecated use {@link StyleButtonBuilder}
    * @param {string} name - The name (text label) of the button.
    * @param {Function} [onClick] - Optional click event handler for the button.
    * @param {Object} [options] - Configuration options for the button.
@@ -258,4 +259,75 @@ const ModalButtonBuilder = {
   buttonSize: buttonSize,
 };
 
-export { ModalButtonBuilder, ButtonBuilder };
+const StyleButtonBuilder = {
+  /**
+   * Builds a generic button
+   * @param {string} name
+   * @param {"small" | "medium" | "large"} size
+   * @param {"primary" | "secondary" | "danger" | "success" | "warning" | "info"} type
+   * @param {Function|null} onClick
+   * @returns {GenericElement}
+   */
+  make(name, size = "medium", type = "primary", onClick = null) {
+    // Base “btn” styles
+    const baseClasses = "rounded font-semibold transition";
+
+    // Size variants
+    let sizeClasses;
+    switch (size) {
+      case "small":
+        sizeClasses = "px-2 py-1 text-sm";
+        break;
+      case "large":
+        sizeClasses = "px-6 py-3 text-lg";
+        break;
+      default:
+        // medium
+        sizeClasses = "px-4 py-2 text-base";
+    }
+
+    // Type variants (uses our CSS-first @theme tokens)
+    let typeClasses;
+    switch (type) {
+      case "primary":
+        typeClasses = "bg-primary text-background hover:bg-deep-accent";
+        break;
+      case "secondary":
+        typeClasses = "bg-secondary text-background hover:bg-accent";
+        break;
+      case "danger":
+        typeClasses = "bg-danger text-background hover:opacity-90";
+        break;
+      case "success":
+        typeClasses = "bg-success text-background hover:opacity-90";
+        break;
+      case "warning":
+        typeClasses = "bg-warning text-background hover:opacity-90";
+        break;
+      case "info":
+        typeClasses = "bg-info text-background hover:opacity-90";
+        break;
+      default:
+        typeClasses = "";
+    }
+
+    // Compose full className
+    const className = [baseClasses, sizeClasses, typeClasses]
+      .filter(Boolean)
+      .join(" ");
+
+    // Build options for GenericElement
+    const opts = {
+      attributes: { class: className },
+      content: name,
+    };
+    if (onClick) {
+      opts.events = { click: onClick };
+    }
+
+    return new GenericElement("button", opts);
+  },
+};
+
+export default StyleButtonBuilder;
+export { ModalButtonBuilder, ButtonBuilder, StyleButtonBuilder };

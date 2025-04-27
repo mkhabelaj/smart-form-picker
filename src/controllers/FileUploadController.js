@@ -3,11 +3,13 @@ import { fetchData, fetchBlob } from "../api.js";
 import GenericElement from "../elements/GenericElement.js";
 import { Toast } from "../toasts/Toast.js";
 import { getInputLabelContent, injectBlobToFile } from "../utils.js";
+import ModalDialog from "../modals/modals/ModalDialog.js";
 
 export default class FileUploadController {
   constructor() {
     this.toast = new Toast();
-    this.modal = new SimpleModal("Smart File Upload");
+    // this.modal = new SimpleModal("Smart File Upload");
+    this.modal = new ModalDialog({ title: "Smart File Upload" });
     this.#loadContent();
   }
 
@@ -43,13 +45,14 @@ export default class FileUploadController {
       targetContainer.appendChild(targetSelect);
 
       // Create and append the submit button to the form
-      const submitButton =
-        this.modal.elementBuilder.buttons.build.buildPrimaryButton(
-          "Upload",
-          () => {
-            form.requestSubmit();
-          },
-        );
+      const submitButton = this.modal.elementBuilder.StyleButtonBuilder.make(
+        "Upload",
+        "medium",
+        "primary",
+        () => {
+          form.requestSubmit();
+        },
+      );
 
       this.modal.appendFooter(submitButton);
 

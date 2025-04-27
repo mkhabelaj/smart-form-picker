@@ -13,12 +13,18 @@ export const InputBuilder = {
     const input = new GenericElement("input", {
       attributes: {
         type: "text",
+        class: `block w-full
+            bg-background text-text
+            border border-secondary
+            rounded-lg
+            px-3 py-2
+            shadow-sm
+            transition
+            focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
+            disabled:opacity-50 disabled:cursor-not-allowed`,
         ...attributes,
       },
       styles: {
-        border: "1px solid #ccc",
-        padding: "5px",
-        fontSize: "16px",
         ...styles,
       },
       events,

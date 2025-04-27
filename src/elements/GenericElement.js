@@ -156,4 +156,11 @@ export default class GenericElement {
   get() {
     return this.#element;
   }
+
+  /**
+   * Removes the element from the DOM.
+   */
+  remove() {
+    this.#element.remove();
+  }
 }

@@ -4,7 +4,6 @@ import TemplateController from "./controllers/TemplateController";
 import ConfigController from "./controllers/ConfigController";
 import FormPickerTargetPasteAction from "./controllers/form-picker/list-actions/FormPickerTargetPasteAction";
 import FormPickerCopyAction from "./controllers/form-picker/list-actions/FormPickerCopyAction";
-import ModalDialog from "./modals/modals/ModalDialog";
 
 document.addEventListener("keydown", (event) => {
   // Ctrl+U triggers upload open.
@@ -16,8 +15,7 @@ document.addEventListener("keydown", (event) => {
   // Ctrl+K triggers configuration
   if (event.ctrlKey && event.key === "k") {
     event.preventDefault();
-    // new ConfigController();
-    const d = new ModalDialog({ title: "Configuration" });
+    new ConfigController();
     return;
   }
   // Ctrl+T triggers template Controller
