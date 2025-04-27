@@ -21,11 +21,8 @@ export default class FormPickerTargetPasteAction extends FormPickerAction {
    */
   getAction(key, dataObj, modal) {
     return new GenericElement("span", {
+      attributes: { class: "text-lg cursor-pointer" },
       content: "📋",
-      styles: {
-        "font-size": "18px",
-        cursor: "pointer",
-      },
       events: {
         click: () => {
           this.target.value = dataObj[key];

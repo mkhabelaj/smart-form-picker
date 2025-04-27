@@ -263,7 +263,7 @@ const StyleButtonBuilder = {
   /**
    * Builds a generic button
    * @param {string} name
-   * @param {"small" | "medium" | "large"} size
+   * @param {"tiny" | "small" | "medium" | "large"} size
    * @param {"primary" | "secondary" | "danger" | "success" | "warning" | "info"} type
    * @param {Function|null} onClick
    * @returns {GenericElement}
@@ -275,6 +275,9 @@ const StyleButtonBuilder = {
     // Size variants
     let sizeClasses;
     switch (size) {
+      case "tiny":
+        sizeClasses = "px-1 py-0.5 text-xs";
+        break;
       case "small":
         sizeClasses = "px-2 py-1 text-sm";
         break;

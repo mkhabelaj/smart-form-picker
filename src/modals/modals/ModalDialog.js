@@ -77,7 +77,7 @@ export default class ModalDialog extends GenericElement {
     this.#modalContainer = new GenericElement("div", {
       attributes: {
         class:
-          "bg-background rounded-2xl shadow-xl w-full max-w-lg mx-4 relative",
+          "bg-background rounded-2xl shadow-xl w-full max-w-xl mx-4 relative",
       },
     });
 
@@ -106,7 +106,7 @@ export default class ModalDialog extends GenericElement {
     // scrollable content area
     this.#content = new GenericElement("div", {
       attributes: {
-        class: "max-h-60 overflow-y-auto mt-2",
+        class: "max-h-80 overflow-y-auto mt-2",
       },
     });
 
@@ -120,7 +120,7 @@ export default class ModalDialog extends GenericElement {
     // footer with semantic buttons
     this.#footer = new GenericElement("footer", {
       attributes: {
-        class: "flex justify-end space-x-3",
+        class: "flex justify space-x-3",
       },
     });
   }
@@ -233,11 +233,20 @@ export default class ModalDialog extends GenericElement {
   }
 
   /**
+   * adds to header
+   * @param {HTMLElement | GenericElement} item
+   * @returns {void}
+   */
+  appendHeader(item) {
+    this.#header.appendChild(item);
+  }
+  /**
    * Adds to content area
    * @param {HTMLElement | GenericElement} item
    * @returns {void}
    */
   renderContent(item) {
+    this.#content.setHTML("");
     this.appendContent(item);
   }
 

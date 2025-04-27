@@ -15,11 +15,8 @@ export default class FormPickerCopyAction extends FormPickerAction {
    */
   getAction(key, dataObj, modal) {
     return new GenericElement("span", {
+      attributes: { class: "text-lg cursor-pointer" },
       content: "📄",
-      styles: {
-        "font-size": "18px",
-        cursor: "pointer",
-      },
       events: {
         click: () => {
           navigator.clipboard.writeText(dataObj[key]);
