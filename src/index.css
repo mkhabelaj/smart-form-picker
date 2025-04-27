@@ -1,7 +1,12 @@
 /* 1) Bring in Tailwind’s engine */
 @import "tailwindcss";
 
-/* 1. Base “purpleMajesty” theme + extra tokens for danger, warning, info */
+/* 2) Core layers */
+/* @tailwind base; */
+/* @tailwind components; */
+/* @tailwind utilities; */
+
+/* 1. Base “purplemajesty” theme + extra tokens for danger, warning, info */
 @theme {
   /* Existing purple tokens */
   --color-primary: #8e44ad;
@@ -18,27 +23,26 @@
   --color-info: #3182ce;
 }
 
-/* 2. Define your button components */
+/* 2) Build your button components */
 @layer components {
-  /* Shared base styles */
+  /* Base button style */
   .btn {
     @apply px-4 py-2 rounded font-semibold transition;
   }
-
-  /* Variations */
+  /* Variants—only applying real utilities! */
   .btn-primary {
-    @apply btn bg-primary text-background hover:bg-deep-accent;
+    @apply bg-primary   text-background hover:bg-deep-accent;
   }
   .btn-secondary {
-    @apply btn bg-secondary text-background hover:bg-accent;
+    @apply bg-secondary text-background hover:bg-accent;
   }
   .btn-danger {
-    @apply btn bg-danger text-background hover:opacity-90;
+    @apply bg-danger    text-background hover:opacity-90;
   }
   .btn-warning {
-    @apply btn bg-warning text-background hover:opacity-90;
+    @apply bg-warning   text-background hover:opacity-90;
   }
   .btn-info {
-    @apply btn bg-info text-background hover:opacity-90;
+    @apply bg-info      text-background hover:opacity-90;
   }
 }

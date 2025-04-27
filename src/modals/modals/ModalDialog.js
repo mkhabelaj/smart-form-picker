@@ -56,26 +56,30 @@ export default class ModalDialog extends GenericElement {
   }
 
   #makeModal() {
+    // overlay stays the same—semi-transparent black layer
     this.#overlay = new GenericElement("div", {
       attributes: {
         class:
-          "fixed inset-0 bg-black/50  flex items-center justify-center z-50",
+          "fixed inset-0 bg-black/50 flex items-center justify-center z-50 text-text",
       },
     });
 
+    // modal container now uses bg-background (Pale Lilac) and text-text (Dark Purple)
     this.#modal = new GenericElement("div", {
       attributes: {
         class:
-          "bg-white z-51  dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-lg mx-4 p-6 relative",
+          "bg-background rounded-2xl shadow-xl w-full max-w-lg mx-4 p-6 relative",
       },
     });
 
+    // title uses text-primary (Majestic Purple)
     this.#title = new GenericElement("h2", {
       attributes: {
-        class: "text-xl font-semibold text-gray-800 dark:text-gray-100",
+        class: "text-primary text-2xl font-semibold mb-2",
       },
     });
 
+    // header wrapper
     this.#header = new GenericElement("header", {
       attributes: {
         class: "mb-4",
@@ -83,20 +87,35 @@ export default class ModalDialog extends GenericElement {
       content: this.#modalTitle,
     });
 
+    // scrollable content area
     this.#content = new GenericElement("div", {
       attributes: {
         class: "max-h-60 overflow-y-auto mt-2",
       },
     });
+
+    // body text uses text-text (Dark Purple)
     this.#body = new GenericElement("section", {
       attributes: {
-        class: "mb-6 text-gray-600 dark:text-gray-300",
+        class: "mb-6 text-text",
       },
     });
+
+    // footer with semantic buttons
     this.#footer = new GenericElement("footer", {
       attributes: {
         class: "flex justify-end space-x-3",
       },
+    });
+
+    // example buttons—feel free to swap btn-* variants
+    const okButton = new GenericElement("button", {
+      attributes: { class: "btn-primary" },
+      content: "OK",
+    });
+    const cancelButton = new GenericElement("button", {
+      attributes: { class: "btn-secondary" },
+      content: "Cancel",
     });
 
     this.#modal.appendChild(this.#header);
