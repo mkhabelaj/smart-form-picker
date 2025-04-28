@@ -1,10 +1,7 @@
-import { getDataSource, getDataSources, setDataSource } from "../api";
-import SimpleModalElementBuilder from "../builders/SimpleElementBuilder";
 import GenericElement from "../elements/GenericElement";
 import SimpleModal from "../modals/modals/simple-modal/SimpleModal";
-import { Toast } from "../toasts/Toast";
-import DataSourceSwitcher from "./action-buttons/config-controller/DataSourceSwitcher";
-import OllamaModelSwitcher from "./action-buttons/config-controller/OlammaModelSwitcher";
+import DataSourceSwitcher from "./actions/config-controller/DataSourceSwitcher.js";
+import OllamaModelSwitcher from "./actions/config-controller/OllamaModelSwitcher.js";
 
 export default class ConfigController {
   constructor() {
