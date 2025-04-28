@@ -1,4 +1,6 @@
+import { twMerge } from "tailwind-merge";
 import { isSignal, createEffect, signal } from "../SimpleSignal.js";
+import clsx from "clsx";
 
 export default class GenericElement {
   #element;
@@ -162,5 +164,16 @@ export default class GenericElement {
    */
   remove() {
     this.#element.remove();
+  }
+
+  /**
+   * Merge class names with clsx + tailwind-merge
+   * @param {...string} classes
+   */
+  mergeClasses(...classes) {
+    const current = Array.from(this.#element.classList);
+    const merged = twMerge(clsx(current, ...classes));
+    console.log(current, classes, merged);
+    this.#element.className = merged;
   }
 }

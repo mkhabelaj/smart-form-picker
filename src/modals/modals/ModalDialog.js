@@ -265,4 +265,12 @@ export default class ModalDialog extends GenericElement {
   show() {
     this.#overlay.get().style.visibility = "visible";
   }
+
+  /**
+   * Returns the modal container element.
+   * @returns {GenericElement} The modal container element.
+   */
+  getModalContainer() {
+    return this.#modalContainer;
+  }
 }

@@ -27,6 +27,8 @@ export default class TemplateController {
   #savedNamesListKey = "savedNamesList";
   /** @type {HTMLElement | null} */
   #documentContext = null;
+  /** @type {ModalDialog} */
+  modal;
 
   constructor() {
     this.toast = new Toast();
@@ -36,6 +38,7 @@ export default class TemplateController {
     this.#createTemplateSelectLoader();
     this.#container.append(this.#textArea);
     this.modal = new ModalDialog({ title: "Template Picker" });
+    this.modal.getModalContainer().mergeClasses("max-w-3xl");
     // this.modal.mergeStyles({ "min-width": "700px", "max-width": "900px" });
     this.#createTemplateAreaClearButton();
     this.#createClearPopupButton();
