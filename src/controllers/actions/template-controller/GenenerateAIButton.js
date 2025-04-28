@@ -91,122 +91,113 @@ export default class GenerateAIButton extends TemplateControllerAction {
    *
    * */
   async #buildButtonsFromPrompts(templatePrompts) {
-    const aiBtn = this.elementbuilder.ButtonBuilder.getButton(
-      "AI",
-      async () => {
-        try {
-          const selectedModel = ollamaModel;
-          const whichContext = this.templateController.isDocumentContextSet()
-            ? "User selected context"
-            : "Configuration context: defined as $document in the template-prompts mapping.json";
-          const title = signal("Generate with AI");
-          const { popup, container } = this.createContainerAndPopup(title);
+    const aiBtn = this.makeSecondaryButton("AI", async () => {
+      try {
+        const selectedModel = ollamaModel;
+        const whichContext = this.templateController.isDocumentContextSet()
+          ? "User selected context"
+          : "Configuration context: defined as $document in the template-prompts mapping.json";
+        const title = signal("Generate with AI");
+        const { popup, container } = this.createContainerAndPopup(title);
 
-          const div = new GenericElement("div", {
-            styles: {
-              display: "flex",
-              flexDirection: "column",
-              gap: "2px",
-            },
-            children: [
-              new GenericElement("h4", {
-                content: "Select and action to begin AI generation",
-              }),
-              new GenericElement("div", {
-                styles: {
-                  display: "flex",
-                  flexDirection: "row",
-                  gap: "2px",
-                },
-                children: [
-                  new GenericElement("p", {
-                    styles: {
-                      "font-weight": "bold",
-                    },
-                    content: `Select model: `,
-                  }),
-
-                  new GenericElement("p", {
-                    styles: {
-                      "font-weight": "bold",
-                    },
-                    content: selectedModel,
-                  }),
-                ],
-              }),
-              new GenericElement("p", {
-                styles: {
-                  "font-weight": "bold",
-                },
-                content: `${whichContext}`,
-              }),
-            ],
-          });
-          selectedModel.set(await getCurrentOllamaModel());
-          container.appendChild(div);
-          popup.removeCloseButton();
-          const buttonContainer = this.#createButtonContainer();
-
-          popup.setBody(container.get());
-          popup.setFooter(buttonContainer.get());
-
-          for (const prompt of templatePrompts) {
-            const buttonType = prompt.button;
-            const button = this.elementbuilder.ButtonBuilder.getButton(
-              prompt.name,
-              async () => {
-                try {
-                  title.set("Generate with AI" + " - " + prompt.name);
-                  let joinPrompt = prompt.prompt.join(" ");
-                  if (prompt.output === "$textarea") {
-                    this.checkIfTextAreaIsEmpty();
-                  }
-                  joinPrompt = joinPrompt.replace(
-                    "$textarea",
-                    this.textArea.value,
-                  );
-                  joinPrompt = joinPrompt.replace(
-                    "$container",
-                    container.get(),
-                  );
-                  joinPrompt = joinPrompt.replace(
-                    "$document",
-                    this.getDocumentContext(),
-                  );
-
-                  if (joinPrompt.includes("$files")) {
-                    const filePlaceholders =
-                      await this.#getFilePlaceholdersMap(prompt);
-                    for (const { placeholder, file } of filePlaceholders) {
-                      joinPrompt = joinPrompt.replace(placeholder, file);
-                    }
-                  }
-                  const aiOutput = await queryOllama(joinPrompt);
-                  if (prompt.output === "$textarea") {
-                    this.textArea.value = aiOutput;
-                  }
-                  if (prompt.output === "$container") {
-                    container.setHTML(marked(aiOutput));
-                  }
-                } catch (error) {
-                  this.toastEmptyTextAreaError(error);
-                  console.error(error);
-                  this.toast.error("Error filling template.");
-                }
+        const div = new GenericElement("div", {
+          styles: {
+            display: "flex",
+            flexDirection: "column",
+            gap: "2px",
+          },
+          children: [
+            new GenericElement("h4", {
+              content: "Select and action to begin AI generation",
+            }),
+            new GenericElement("div", {
+              styles: {
+                display: "flex",
+                flexDirection: "row",
+                gap: "2px",
               },
-              { type: buttonType, size: "small" },
-            );
-            buttonContainer.appendChild(button);
-          }
-        } catch (err) {
-          console.error(err);
-          this.toast.error("Error filling template.");
+              children: [
+                new GenericElement("p", {
+                  styles: {
+                    "font-weight": "bold",
+                  },
+                  content: `Select model: `,
+                }),
+
+                new GenericElement("p", {
+                  styles: {
+                    "font-weight": "bold",
+                  },
+                  content: selectedModel,
+                }),
+              ],
+            }),
+            new GenericElement("p", {
+              styles: {
+                "font-weight": "bold",
+              },
+              content: `${whichContext}`,
+            }),
+          ],
+        });
+        selectedModel.set(await getCurrentOllamaModel());
+        container.appendChild(div);
+        popup.removeCloseButton();
+        const buttonContainer = this.#createButtonContainer();
+
+        popup.setBody(container.get());
+        popup.setFooter(buttonContainer.get());
+
+        for (const prompt of templatePrompts) {
+          const buttonType = prompt.button;
+          const button = this.elementbuilder.ButtonBuilder.getButton(
+            prompt.name,
+            async () => {
+              try {
+                title.set("Generate with AI" + " - " + prompt.name);
+                let joinPrompt = prompt.prompt.join(" ");
+                if (prompt.output === "$textarea") {
+                  this.checkIfTextAreaIsEmpty();
+                }
+                joinPrompt = joinPrompt.replace(
+                  "$textarea",
+                  this.textArea.value,
+                );
+                joinPrompt = joinPrompt.replace("$container", container.get());
+                joinPrompt = joinPrompt.replace(
+                  "$document",
+                  this.getDocumentContext(),
+                );
+
+                if (joinPrompt.includes("$files")) {
+                  const filePlaceholders =
+                    await this.#getFilePlaceholdersMap(prompt);
+                  for (const { placeholder, file } of filePlaceholders) {
+                    joinPrompt = joinPrompt.replace(placeholder, file);
+                  }
+                }
+                const aiOutput = await queryOllama(joinPrompt);
+                if (prompt.output === "$textarea") {
+                  this.textArea.value = aiOutput;
+                }
+                if (prompt.output === "$container") {
+                  container.setHTML(marked(aiOutput));
+                }
+              } catch (error) {
+                this.toastEmptyTextAreaError(error);
+                console.error(error);
+                this.toast.error("Error filling template.");
+              }
+            },
+            { type: buttonType, size: "small" },
+          );
+          buttonContainer.appendChild(button);
         }
-      },
-      {
-        type: "secondary",
-      },
-    );
+      } catch (err) {
+        console.error(err);
+        this.toast.error("Error filling template.");
+      }
+    });
     this.modal.appendFooter(aiBtn);
   }
 }

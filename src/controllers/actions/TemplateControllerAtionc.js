@@ -35,4 +35,17 @@ export default class TemplateControllerAction extends ControllerAction {
       toast.error(error.message);
     }
   }
+
+  makeActionButton(name, onclick = null) {
+    return this.makeTinyButton(name, "primary", onclick);
+  }
+  makeDangerButton(name, onclick = null) {
+    return this.makeTinyButton(name, "danger", onclick);
+  }
+  makeInfoButton(name, onclick = null) {
+    return this.makeTinyButton(name, "info", onclick);
+  }
+  makeSecondaryButton(name, onclick = null) {
+    return this.makeTinyButton(name, "secondary", onclick);
+  }
 }

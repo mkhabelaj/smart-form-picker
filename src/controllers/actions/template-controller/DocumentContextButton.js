@@ -70,7 +70,7 @@ export default class DocumentContextButton extends TemplateControllerAction {
     };
 
     // Button that toggles the selection mode
-    const selectorButton = this.elementbuilder.ButtonBuilder.getButton(
+    const selectorButton = this.makeActionButton(
       "Context Selector",
       () => {
         // Inject stylesheet if missing

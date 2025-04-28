@@ -1,4 +1,5 @@
 import GenericElement from "../../../elements/GenericElement";
+import TemplateController from "../../TemplateController";
 import TemplateControllerAction from "../TemplateControllerAtionc";
 
 export default class ViewButton extends TemplateControllerAction {
@@ -14,41 +15,38 @@ export default class ViewButton extends TemplateControllerAction {
   }
   #init() {
     const textArea = this.textArea;
-    const viewButton = this.elementbuilder.buttons.build.buildPrimaryButton(
-      "Preview",
-      () => {
-        const { popup, container } =
-          this.createContainerAndPopup("Preview Template");
+    const viewButton = this.makeActionButton("Preview", () => {
+      const { popup, container } =
+        this.createContainerAndPopup("Preview Template");
 
-        const description = new GenericElement("p", {
-          styles: { "text-align": "center" },
-          content: "You can preview the template here.",
-        });
+      const description = new GenericElement("p", {
+        styles: { "text-align": "center" },
+        content: "You can preview the template here.",
+      });
 
-        container.appendChild(description);
-        popup.setBody(container.get());
+      container.appendChild(description);
+      popup.setBody(container.get());
 
-        const previewExternalB =
-          this.elementbuilder.buttons.build.buildPrimaryButton(
-            "Preview",
-            async () => {
-              try {
-                const template = textArea.value;
-                this.checkIfTextAreaIsEmpty();
-                const doc = getGeneratedGoogleLikeJsPDF(template);
+      const previewExternalB =
+        this.elementbuilder.buttons.build.buildPrimaryButton(
+          "Preview",
+          async () => {
+            try {
+              const template = textArea.value;
+              this.checkIfTextAreaIsEmpty();
+              const doc = getGeneratedGoogleLikeJsPDF(template);
 
-                window.open(doc.output("bloburl"), "_blank");
-              } catch (error) {
-                this.toastEmptyTextAreaError(error);
-                console.error(error);
-                this.toast.error("Error creating PDF.");
-              }
-            },
-            this.elementbuilder.buttons.buttonSize.small,
-          );
-        popup.setFooter(previewExternalB);
-      },
-    );
+              window.open(doc.output("bloburl"), "_blank");
+            } catch (error) {
+              this.toastEmptyTextAreaError(error);
+              console.error(error);
+              this.toast.error("Error creating PDF.");
+            }
+          },
+          this.elementbuilder.buttons.buttonSize.small,
+        );
+      popup.setFooter(previewExternalB);
+    });
     this.modal.appendFooter(viewButton);
   }
 }

@@ -1,4 +1,5 @@
 import { getStorage, setStorage } from "../../../api";
+import TemplateController from "../../TemplateController";
 import TemplateControllerAction from "../TemplateControllerAtionc";
 
 export default class SaveAsButton extends TemplateControllerAction {
@@ -17,55 +18,52 @@ export default class SaveAsButton extends TemplateControllerAction {
     const savedNamesListKey = this.savedNamesListKey;
     const textArea = this.textArea;
 
-    const saveAsButton = this.elementbuilder.buttons.build.buildPrimaryButton(
-      "Save As",
-      () => {
-        const { popup, container } =
-          this.createContainerAndPopup("Save Template As");
+    const saveAsButton = this.makeActionButton("Save As", () => {
+      const { popup, container } =
+        this.createContainerAndPopup("Save Template As");
 
-        const saveAsInput = this.elementbuilder.input.build({
-          attributes: { placeholder: "Template Name" },
-        });
+      const saveAsInput = this.elementbuilder.input.build({
+        attributes: { placeholder: "Template Name" },
+      });
 
-        container.appendChild(saveAsInput);
+      container.appendChild(saveAsInput);
 
-        const savePopupButton =
-          this.elementbuilder.buttons.build.buildPrimaryButton(
-            "Save",
-            async () => {
-              try {
-                const templateName = saveAsInput.value;
-                const template = textArea.value;
-                this.checkIfTextAreaIsEmpty();
-                // Retrieve the stored list of template names.
-                const result = await getStorage(savedNamesListKey);
-                let savedNames = result[savedNamesListKey] || [];
-                // If the template name already exists, throw an error.
-                if (savedNames.includes(templateName)) {
-                  throw new Error("Template name already exists");
-                }
-                // Add the new template name to the list.
-                savedNames.push(templateName);
-                // Save the template under its name and update the saved names list.
-                await setStorage({
-                  [templateName]: template,
-                  [savedNamesListKey]: savedNames,
-                });
-                this.toast.success(`Template saved as ${templateName}.`);
-                popup.close();
-              } catch (error) {
-                console.error(error);
-                this.toastEmptyTextAreaError(error);
-                this.toast.error("Error saving template.");
+      const savePopupButton =
+        this.elementbuilder.buttons.build.buildPrimaryButton(
+          "Save",
+          async () => {
+            try {
+              const templateName = saveAsInput.value;
+              const template = textArea.value;
+              this.checkIfTextAreaIsEmpty();
+              // Retrieve the stored list of template names.
+              const result = await getStorage(savedNamesListKey);
+              let savedNames = result[savedNamesListKey] || [];
+              // If the template name already exists, throw an error.
+              if (savedNames.includes(templateName)) {
+                throw new Error("Template name already exists");
               }
-            },
-            this.elementbuilder.buttons.buttonSize.small,
-          );
+              // Add the new template name to the list.
+              savedNames.push(templateName);
+              // Save the template under its name and update the saved names list.
+              await setStorage({
+                [templateName]: template,
+                [savedNamesListKey]: savedNames,
+              });
+              this.toast.success(`Template saved as ${templateName}.`);
+              popup.close();
+            } catch (error) {
+              console.error(error);
+              this.toastEmptyTextAreaError(error);
+              this.toast.error("Error saving template.");
+            }
+          },
+          this.elementbuilder.buttons.buttonSize.small,
+        );
 
-        popup.setBody(container.get());
-        popup.setFooter(savePopupButton);
-      },
-    );
+      popup.setBody(container.get());
+      popup.setFooter(savePopupButton);
+    });
 
     this.modal.appendFooter(saveAsButton);
   }

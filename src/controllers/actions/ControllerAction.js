@@ -43,4 +43,66 @@ export default class ControllerAction {
 
     return { popup, container };
   }
+
+  /**
+   * Builds a generic button
+   * @param {string} name
+   * @param {"primary" | "secondary" | "danger" | "success" | "warning" | "info"} type
+   * @param {Function|null} onClick
+   * @returns {GenericElement}
+   */
+  makeTinyButton(name, type, onClick = null) {
+    return this.elementbuilder.StyleButtonBuilder.make(
+      name,
+      "tiny",
+      type,
+      onClick,
+    );
+  }
+  /**
+   * Builds a generic button
+   * @param {string} name
+   * @param {"primary" | "secondary" | "danger" | "success" | "warning" | "info"} type
+   * @param {Function|null} onClick
+   * @returns {GenericElement}
+   */
+  makeSmallButton(name, type, onClick = null) {
+    return this.elementbuilder.StyleButtonBuilder.make(
+      name,
+      "small",
+      type,
+      onClick,
+    );
+  }
+  /**
+   * Builds a generic button
+   * @param {string} name
+   * @param {"primary" | "secondary" | "danger" | "success" | "warning" | "info"} type
+   * @param {Function|null} onClick
+   * @returns {GenericElement}
+   */
+  makeMediumButton(name, type, onClick = null) {
+    return this.elementbuilder.StyleButtonBuilder.make(
+      name,
+      "medium",
+      type,
+      onClick,
+    );
+  }
+
+  /**
+   * Builds a generic button
+   * @param {string} name
+   * @param {"primary" | "secondary" | "danger" | "success" | "warning" | "info"} type
+   * @param {Function|null} onClick
+   * @returns {GenericElement}
+   */
+  makesLargeButton(name, type, onClick = null) {
+    return this.elementbuilder.StyleButtonBuilder.make(
+      name,
+      "large",
+      type,
+      onClick,
+    );
+  }
 }
