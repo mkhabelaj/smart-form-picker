@@ -1,4 +1,5 @@
 import GenericElement from "../../../elements/GenericElement";
+import ModalDialog from "../../../modals/modals/ModalDialog";
 import FormPickerAction from "./FormPickerAction";
 
 export default class FormPickerTargetPasteAction extends FormPickerAction {
@@ -16,7 +17,7 @@ export default class FormPickerTargetPasteAction extends FormPickerAction {
    * Gets the target action.
    * @param {string} key - The key of the action.
    * @param {{ [key: string]: string }} dataObj - The data object.
-   * @param {SimpleModal} modal - The modal instance.
+   * @param {ModalDialog} modal - The modal instance.
    * @returns {GenericElement}
    */
   getAction(key, dataObj, modal) {

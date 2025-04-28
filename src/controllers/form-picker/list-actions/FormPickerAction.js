@@ -1,5 +1,5 @@
 import GenericElement from "../../../elements/GenericElement.js";
-import SimpleModal from "../../../modals/modals/simple-modal/SimpleModal.js";
+import ModalDialog from "../../../modals/modals/ModalDialog.js";
 import { Toast } from "../../../toasts/Toast.js";
 export default class FormPickerAction {
   toast = new Toast();
@@ -9,7 +9,7 @@ export default class FormPickerAction {
    * Executes the action.
    * @param {string} key - The key of the action.
    * @param {{ [key: string]: string }} dataObj - The data object.
-   * @param {SimpleModal} modal - The modal instance.
+   * @param {ModalDialog} modal - The modal instance.
    * @throws {Error} If the method is not implemented.
    * @returns {GenericElement}
    */

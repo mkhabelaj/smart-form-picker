@@ -7,7 +7,6 @@ import ModalDialog from "../modals/modals/ModalDialog.js";
 export default class FileUploadController {
   constructor() {
     this.toast = new Toast();
-    // this.modal = new SimpleModal("Smart File Upload");
     this.modal = new ModalDialog({ title: "Smart File Upload" });
     this.#loadContent();
   }
