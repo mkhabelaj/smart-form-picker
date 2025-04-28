@@ -13,6 +13,7 @@ import ClearPopupButton from "./actions/template-controller/ClearPopupButton.js"
 import CopyButton from "./actions/template-controller/CopyButton.js";
 import DownloadButton from "./actions/template-controller/DownloadButton.js";
 import UploadPdfButton from "./actions/template-controller/UploadPdfButton.js";
+import { TemplateLoader } from "./actions/template-controller/TemplateLoader.js";
 
 /**
  *
@@ -32,9 +33,8 @@ export default class TemplateController {
     this.toast = new Toast();
     this.elementbuilder = SimpleElementBuilder;
     this.#container = this.#createContainer();
-    // Kick off the template select loader early so it’s added to the container.
-    this.#createTemplateSelectLoader();
     this.#textArea = this.#createTexArea();
+    this.#createTemplateSelectLoader();
     this.#container.append(this.#textArea);
 
     this.#createStyleSheet().then((styleSheet) => {
@@ -110,6 +110,10 @@ export default class TemplateController {
   #createDocumentContext() {
     new DocumentContextButton(this.#textArea, this.modal, this);
   }
+  // Initializes the template select loader to load templates from mapping.json into a select element.
+  #createTemplateSelectLoader() {
+    new TemplateLoader(this.#textArea, this.modal, this);
+  }
   // Creates the container element.
   #createContainer() {
     const container = new GenericElement("div", {
@@ -136,30 +140,6 @@ export default class TemplateController {
     return textArea.get();
   }
 
-  // Initializes the template select loader to load templates from mapping.json into a select element.
-  async #createTemplateSelectLoader() {
-    try {
-      const data = await fetchData("mapping.json");
-      const templateSelect =
-        this.elementbuilder.select.build("Select Template");
-
-      templateSelect.setOnChange(async (e) => {
-        const selectedValue = e.target.value;
-        const text = await fetchText(selectedValue);
-        this.#textArea.value = text;
-      });
-
-      for (const name of data["templates"]) {
-        templateSelect.addOption(name, name);
-      }
-      this.#templateSelectLoader = templateSelect.get();
-      this.#container.append(this.#templateSelectLoader);
-    } catch (error) {
-      console.error("Error loading templates:", error);
-      this.toast.error("Error loading templates.");
-    }
-  }
-
   /**
    *
    * @param {HTMLElement} element
@@ -181,5 +161,8 @@ export default class TemplateController {
    * */
   isDocumentContextSet() {
     return this.#documentContext !== null;
+  }
+  getContainer() {
+    return this.#container;
   }
 }
