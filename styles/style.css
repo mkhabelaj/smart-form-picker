@@ -328,6 +328,9 @@
   .list-none {
     list-style-type: none;
   }
+  .flex-col {
+    flex-direction: column;
+  }
   .items-center {
     align-items: center;
   }
@@ -348,6 +351,9 @@
   }
   .gap-2 {
     gap: calc(var(--spacing) * 2);
+  }
+  .gap-2\.5 {
+    gap: calc(var(--spacing) * 2.5);
   }
   .space-x-2 {
     :where(& > :not(:last-child)) {
@@ -569,6 +575,14 @@
   .ease-in-out {
     --tw-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
+  }
+  .placeholder\:text-secondary {
+    &::-moz-placeholder {
+      color: var(--color-secondary);
+    }
+    &::placeholder {
+      color: var(--color-secondary);
+    }
   }
   .hover\:bg-accent {
     &:hover {

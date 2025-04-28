@@ -101,32 +101,39 @@ export default class TemplateController {
   #createTemplateSelectLoader() {
     new TemplateLoader(this.#textArea, this.modal, this);
   }
+
   // Creates the container element.
   #createContainer() {
     const container = new GenericElement("div", {
-      styles: {
-        display: "flex",
-        flexDirection: "column",
-        gap: "10px",
+      attributes: {
+        class: "flex flex-col gap-2.5",
       },
     });
     return container.get();
   }
+
   // Creates the textarea element.
   #createTexArea() {
     const textArea = new GenericElement("textarea", {
       attributes: {
         placeholder: "Paste your template here",
-        rows: 10,
-        cols: 50,
-      },
-      styles: {
-        borderRadius: "5px",
+        rows: "10",
+        cols: "50",
+        class: [
+          "block w-full",
+          "bg-background text-text",
+          "border border-secondary rounded-lg",
+          "px-3 py-2",
+          "shadow-sm",
+          "placeholder:text-secondary",
+          "transition",
+          "focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary",
+          "disabled:opacity-50 disabled:cursor-not-allowed",
+        ].join(" "),
       },
     });
     return textArea.get();
   }
-
   /**
    *
    * @param {HTMLElement} element

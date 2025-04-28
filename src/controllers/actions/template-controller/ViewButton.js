@@ -1,5 +1,6 @@
 import GenericElement from "../../../elements/GenericElement";
 import ModalDialog from "../../../modals/modals/ModalDialog";
+import { getGeneratedGoogleLikeJsPDF } from "../../../utils";
 import TemplateController from "../../TemplateController";
 import TemplateControllerAction from "../TemplateControllerAtionc";
 
