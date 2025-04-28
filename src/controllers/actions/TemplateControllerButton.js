@@ -1,11 +1,11 @@
 import { Toast } from "../../toasts/Toast";
 import { checkIfInputIsImpty } from "../../utils";
 import TemplateController from "../TemplateController";
-import ControllerButton from "./ControllerButton";
+import ControllerAction from "./ControllerAction";
 
 class EmptyTextAreaError extends Error {}
 
-export default class TemplateControllerButton extends ControllerButton {
+export default class TemplateControllerButton extends ControllerAction {
   /**
    * @param {HTMLTextAreaElement} textArea
    * @param {SimpleModal} modal
@@ -15,6 +15,7 @@ export default class TemplateControllerButton extends ControllerButton {
     super(modal);
     this.textArea = textArea;
     this.templateController = templateController;
+    this.savedNamesListKey = this.templateController.getSavedNamesListKey();
   }
 
   checkIfTextAreaIsEmpty() {

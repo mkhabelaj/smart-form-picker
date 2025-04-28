@@ -1,11 +1,11 @@
-import SimpleModalElementBuilder from "../../builders/SimpleElementBuilder";
-import GenericElement from "../../elements/GenericElement";
-import SimpleModal from "../../modals/modals/simple-modal/SimpleModal";
-import SimplePopup from "../../popups/simple-popup/SimplePopup";
-import { Toast } from "../../toasts/Toast";
+import SimpleModalElementBuilder from "../../builders/SimpleElementBuilder.js";
+import GenericElement from "../../elements/GenericElement.js";
+import SimpleModal from "../../modals/modals/simple-modal/SimpleModal.js";
+import SimplePopup from "../../popups/simple-popup/SimplePopup.js";
+import { Toast } from "../../toasts/Toast.js";
 import { signal } from "../../SimpleSignal.js";
 
-export default class ControllerButton {
+export default class ControllerAction {
   /**
    * @param {SimpleModal} modal
    */

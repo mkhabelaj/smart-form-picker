@@ -1,6 +1,6 @@
-import ControllerButton from "./ControllerButton";
+import ControllerAction from "./ControllerAction";
 
-export default class ConfigControllerButton extends ControllerButton {
+export default class ConfigControllerButton extends ControllerAction {
   /**
    * @param {HTMLTextAreaElement} textArea
    * @param {SimpleModal} modal
