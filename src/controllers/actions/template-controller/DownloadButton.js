@@ -1,11 +1,13 @@
 import GenericElement from "../../../elements/GenericElement";
+import ModalDialog from "../../../modals/modals/ModalDialog";
 import { createGoogleDocLikePDF } from "../../../utils";
+import TemplateController from "../../TemplateController";
 import TemplateControllerAction from "../TemplateControllerAtionc";
 
 export default class DownloadButton extends TemplateControllerAction {
   /**
    * @param {HTMLTextAreaElement} textArea
-   * @param {SimpleModal} modal
+   * @param {ModalDialog} modal
    * @param {TemplateController} templateController
    *
    */

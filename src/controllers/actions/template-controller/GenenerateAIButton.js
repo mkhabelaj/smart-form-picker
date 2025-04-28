@@ -9,11 +9,12 @@ import {
 import TemplateControllerAction from "../TemplateControllerAtionc";
 import GenericElement from "../../../elements/GenericElement";
 import TemplateController from "../../TemplateController";
-import { createEffect, signal } from "../../../SimpleSignal";
+import { signal } from "../../../SimpleSignal";
+import ModalDialog from "../../../modals/modals/ModalDialog";
 export default class GenerateAIButton extends TemplateControllerAction {
   /**
    * @param {HTMLTextAreaElement} textArea
-   * @param {SimpleModal} modal
+   * @param {ModalDialog} modal
    * @param {TemplateController} templateController
    */
   constructor(textArea, modal, templateController) {

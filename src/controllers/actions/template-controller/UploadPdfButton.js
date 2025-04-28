@@ -1,14 +1,16 @@
+import ModalDialog from "../../../modals/modals/ModalDialog";
 import {
   getGeneratedGoogleLikeJsPDF,
   getInputLabelContent,
   injectBlobToFile,
 } from "../../../utils";
+import TemplateController from "../../TemplateController";
 import TemplateControllerAction from "../TemplateControllerAtionc";
 
 export default class UploadPdfButton extends TemplateControllerAction {
   /**
    * @param {HTMLTextAreaElement} textArea
-   * @param {SimpleModal} modal
+   * @param {ModalDialog} modal
    * @param {TemplateController} templateController
    *
    */

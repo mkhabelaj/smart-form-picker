@@ -1,3 +1,4 @@
+import ModalDialog from "../../modals/modals/ModalDialog";
 import { Toast } from "../../toasts/Toast";
 import { checkIfInputIsImpty } from "../../utils";
 import TemplateController from "../TemplateController";
@@ -8,7 +9,7 @@ class EmptyTextAreaError extends Error {}
 export default class TemplateControllerAction extends ControllerAction {
   /**
    * @param {HTMLTextAreaElement} textArea
-   * @param {SimpleModal} modal
+   * @param MModalDialog} modal
    * @param {TemplateController} templateController
    */
   constructor(textArea, modal, templateController) {

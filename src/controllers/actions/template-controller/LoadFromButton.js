@@ -1,10 +1,12 @@
 import { getStorage } from "../../../api";
+import ModalDialog from "../../../modals/modals/ModalDialog";
+import TemplateController from "../../TemplateController";
 import TemplateControllerAction from "../TemplateControllerAtionc";
 
 export default class LoadFromButton extends TemplateControllerAction {
   /**
    * @param {HTMLTextAreaElement} textArea
-   * @param {SimpleModal} modal
+   * @param {ModalDialog} modal
    * @param {TemplateController} templateController
    *
    */

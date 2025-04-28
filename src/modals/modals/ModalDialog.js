@@ -257,4 +257,12 @@ export default class ModalDialog extends GenericElement {
   maximize() {
     this.#modal.get().style.display = "block";
   }
+
+  hide() {
+    this.#overlay.get().style.visibility = "hidden";
+  }
+
+  show() {
+    this.#overlay.get().style.visibility = "visible";
+  }
 }

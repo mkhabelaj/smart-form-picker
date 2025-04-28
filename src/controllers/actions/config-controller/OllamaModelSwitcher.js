@@ -4,10 +4,14 @@ import {
   setOllamaModel,
 } from "../../../api";
 import GenericElement from "../../../elements/GenericElement";
+import ModalDialog from "../../../modals/modals/ModalDialog";
 import SimplePopup from "../../../popups/simple-popup/SimplePopup";
 import ConfigControllerButton from "../ConfigControllerButton";
 
 export default class OllamaModelSwitcher extends ConfigControllerButton {
+  /**
+   * @param {ModalDialog} modal
+   */
   constructor(modal) {
     super(modal);
     this.#createlDataSourceSwitcher();

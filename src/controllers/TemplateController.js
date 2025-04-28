@@ -1,6 +1,4 @@
-import SimpleModal from "../modals/modals/simple-modal/SimpleModal.js";
 import GenericElement from "../elements/GenericElement.js";
-import { fetchData, fetchText } from "../api.js";
 import SimpleElementBuilder from "../builders/SimpleElementBuilder.js";
 import { Toast } from "../toasts/Toast.js";
 import GenenerateAIButton from "./actions/template-controller/GenenerateAIButton.js";
@@ -14,6 +12,7 @@ import CopyButton from "./actions/template-controller/CopyButton.js";
 import DownloadButton from "./actions/template-controller/DownloadButton.js";
 import UploadPdfButton from "./actions/template-controller/UploadPdfButton.js";
 import { TemplateLoader } from "./actions/template-controller/TemplateLoader.js";
+import ModalDialog from "../modals/modals/ModalDialog.js";
 
 /**
  *
@@ -21,11 +20,11 @@ import { TemplateLoader } from "./actions/template-controller/TemplateLoader.js"
  *
  * @type {TemplateController}
  */
+
 export default class TemplateController {
   #textArea;
   #container;
   #savedNamesListKey = "savedNamesList";
-  #templateSelectLoader;
   /** @type {HTMLElement | null} */
   #documentContext = null;
 
@@ -36,34 +35,19 @@ export default class TemplateController {
     this.#textArea = this.#createTexArea();
     this.#createTemplateSelectLoader();
     this.#container.append(this.#textArea);
-
-    this.#createStyleSheet().then((styleSheet) => {
-      this.modal = new SimpleModal("Template Picker", {
-        confirmClose: true,
-        stylesheet: styleSheet,
-      });
-      this.modal.mergeStyles({ "min-width": "700px", "max-width": "900px" });
-      this.#createTemplateAreaClearButton();
-      this.#createClearPopupButton();
-      this.#createLoadFromButton();
-      this.#createDownloadButton();
-      this.#createUploadPdfButton();
-      this.#createCopyButton();
-      this.#createSaveAsButton();
-      this.#createViewButton();
-      this.#createAIPopup();
-      this.#createDocumentContext();
-      this.modal.renderContent(this.#container);
-    });
-  }
-
-  async #createStyleSheet() {
-    const url = chrome.runtime.getURL("styles/style.css");
-    const response = await fetch(url);
-    const styleSheet = await response.text();
-    return new GenericElement("style", {
-      content: styleSheet,
-    });
+    this.modal = new ModalDialog({ title: "Template Picker" });
+    // this.modal.mergeStyles({ "min-width": "700px", "max-width": "900px" });
+    this.#createTemplateAreaClearButton();
+    this.#createClearPopupButton();
+    this.#createLoadFromButton();
+    this.#createDownloadButton();
+    this.#createUploadPdfButton();
+    this.#createCopyButton();
+    this.#createSaveAsButton();
+    this.#createViewButton();
+    this.#createAIPopup();
+    this.#createDocumentContext();
+    this.modal.renderContent(this.#container);
   }
 
   #createTemplateAreaClearButton() {

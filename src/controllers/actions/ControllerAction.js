@@ -1,13 +1,13 @@
 import SimpleModalElementBuilder from "../../builders/SimpleElementBuilder.js";
 import GenericElement from "../../elements/GenericElement.js";
-import SimpleModal from "../../modals/modals/simple-modal/SimpleModal.js";
 import SimplePopup from "../../popups/simple-popup/SimplePopup.js";
 import { Toast } from "../../toasts/Toast.js";
 import { signal } from "../../SimpleSignal.js";
+import ModalDialog from "../../modals/modals/ModalDialog.js";
 
 export default class ControllerAction {
   /**
-   * @param {SimpleModal} modal
+   * @param {ModalDialog} modal
    */
   constructor(modal) {
     this.modal = modal;
