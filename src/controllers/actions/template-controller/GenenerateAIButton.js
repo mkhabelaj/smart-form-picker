@@ -6,11 +6,11 @@ import {
   ollamaModel,
   queryOllama,
 } from "../../../api";
-import TemplateControllerButton from "../TemplateControllerButton";
+import TemplateControllerAction from "../TemplateControllerAtionc";
 import GenericElement from "../../../elements/GenericElement";
 import TemplateController from "../../TemplateController";
 import { createEffect, signal } from "../../../SimpleSignal";
-export default class GenerateAIButton extends TemplateControllerButton {
+export default class GenerateAIButton extends TemplateControllerAction {
   /**
    * @param {HTMLTextAreaElement} textArea
    * @param {SimpleModal} modal

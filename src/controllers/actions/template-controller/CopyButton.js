@@ -1,7 +1,7 @@
 import TemplateController from "../../TemplateController";
-import TemplateControllerButton from "../TemplateControllerButton";
+import TemplateControllerAction from "../TemplateControllerAtionc";
 
-export default class CopyButton extends TemplateControllerButton {
+export default class CopyButton extends TemplateControllerAction {
   /**
    * @param {HTMLTextAreaElement} textArea
    * @param {SimpleModal} modal

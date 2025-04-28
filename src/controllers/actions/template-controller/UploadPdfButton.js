@@ -3,9 +3,9 @@ import {
   getInputLabelContent,
   injectBlobToFile,
 } from "../../../utils";
-import TemplateControllerButton from "../TemplateControllerButton";
+import TemplateControllerAction from "../TemplateControllerAtionc";
 
-export default class UploadPdfButton extends TemplateControllerButton {
+export default class UploadPdfButton extends TemplateControllerAction {
   /**
    * @param {HTMLTextAreaElement} textArea
    * @param {SimpleModal} modal

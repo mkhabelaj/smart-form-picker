@@ -5,7 +5,7 @@ import ControllerAction from "./ControllerAction";
 
 class EmptyTextAreaError extends Error {}
 
-export default class TemplateControllerButton extends ControllerAction {
+export default class TemplateControllerAction extends ControllerAction {
   /**
    * @param {HTMLTextAreaElement} textArea
    * @param {SimpleModal} modal

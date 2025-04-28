@@ -1,8 +1,8 @@
 import { getStorage, setStorage } from "../../../api";
 import TemplateController from "../../TemplateController";
-import TemplateControllerButton from "../TemplateControllerButton";
+import TemplateControllerAction from "../TemplateControllerAtionc";
 
-export default class ClearPopupButton extends TemplateControllerButton {
+export default class ClearPopupButton extends TemplateControllerAction {
   /**
    * @param {HTMLTextAreaElement} textArea
    * @param {SimpleModal} modal

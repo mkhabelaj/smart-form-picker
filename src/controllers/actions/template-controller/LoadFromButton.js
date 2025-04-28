@@ -1,7 +1,7 @@
 import { getStorage } from "../../../api";
-import TemplateControllerButton from "../TemplateControllerButton";
+import TemplateControllerAction from "../TemplateControllerAtionc";
 
-export default class LoadFromButton extends TemplateControllerButton {
+export default class LoadFromButton extends TemplateControllerAction {
   /**
    * @param {HTMLTextAreaElement} textArea
    * @param {SimpleModal} modal

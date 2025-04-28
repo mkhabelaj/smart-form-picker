@@ -1,7 +1,7 @@
 import GenericElement from "../../../elements/GenericElement";
-import TemplateControllerButton from "../TemplateControllerButton";
+import TemplateControllerAction from "../TemplateControllerAtionc";
 
-export default class TemplateAreaClearButton extends TemplateControllerButton {
+export default class TemplateAreaClearButton extends TemplateControllerAction {
   /**
    * @param {HTMLTextAreaElement} textArea
    * @param {SimpleModal} modal
